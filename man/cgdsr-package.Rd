@@ -1,0 +1,70 @@
+\name{cgdsr-package}
+\alias{cgdsr-package}
+\alias{cgdsr}
+\docType{package}
+\title{
+CGDS-R : a library for accessing the MSKCC Cancer Genomics Data Server (CGDS).
+}
+\description{
+The package provides a basic set of R functions for querying the Cancer Genomics Data Server (CGDS), hosted by the Computational Biology Center at Memorial-Sloan-Kettering Cancer Center (MSKCC).
+}
+\details{
+\tabular{ll}{
+Package: \tab cgdsr\cr
+Type: \tab Package\cr
+License: \tab GPL\cr
+LazyLoad: \tab yes\cr
+}
+The Cancer Genomic Data Server (CGDS) web service interface provides
+direct programmatic access to all genomic data stored within the server.
+This package provides a basic set of R functions for querying the CGDS
+hosted by the Computational Biology Center at Memorial-Sloan-Kettering
+Cancer Center (MSKCC).
+
+The library can issue the following types of queries:
+
+\enumerate{
+\item \var{getCancerTypes()}: What cancer types are hosted on the server?
+For example TCGA Glioblastoma or TCGA Ovarian cancer.
+\item \var{getGeneticProfiles()}: What genetic profile types are available for
+cancer type X? For example mRNA expression or copy number alterations.
+\item \var{getCaseLists()}: what case sets are available for cancer type X? For
+example all samples or only samples corresponding to a given cancer
+subtype.
+\item \var{getProfileData()}: Retrieve slices of genomic data.  For
+example, a client can retrieve all mutation data from PTEN and EGFR in
+TCGA glioblastoma.
+}
+}
+\author{
+<jacobsen@cbio.mskcc.org>
+}
+\references{
+  CGDS public server at MSKCC: http://cbio.mskcc.org/cgds-public/
+}
+\keyword{ package }
+
+\seealso{
+\code{\link{CGDS}},\code{\link{getCancerTypes}},\code{\link{getGeneticProfiles}},\code{\link{getCaseLists}},\code{\link{getProfileData}}
+}
+
+\examples{
+# Create CGDS object
+mycgds = CGDS("http://cbio.mskcc.org/cgds-public/")
+
+# Test the CGDS endpoint URL using a few simple API tests
+test(mycgds) 
+
+# Get list of cancer types at server
+getCancerTypes(mycgds)
+
+# Get available case lists (collection of samples) for a given cancer type  
+mycancertype = getCancerTypes(mycgds)[1,1]
+mycaselist = getCaseLists(mycgds,mycancertype)[1,1]
+
+# Get available genetic profiles
+mygeneticprofile = getGeneticProfiles(mycgds,mycancertype)[4,1]
+
+# Get data slices for a specified list of genes, genetic profile and case list
+getProfileData(mycgds,c('BRCA1','BRCA2'),mygeneticprofile,mycaselist)
+}

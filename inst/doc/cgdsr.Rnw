@@ -1,0 +1,210 @@
+\documentclass[a4paper]{article}
+
+%\VignetteIndexEntry{Introduction to the CGDS R library}
+%\VignettePackage{cgdsr}
+
+% Definitions
+
+\usepackage{url}
+
+\title{The CGDS-R library}
+\author{Anders Jacobsen}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+
+This package provides a basic set of R functions for querying
+the Cancer Genomic Data Server (CGDS) hosted by the Computational
+Biology Center at Memorial-Sloan-Kettering Cancer Center (MSKCC). In
+summary, the library can issue the following types of queries:
+
+\begin{itemize}
+\item{
+\texttt{getCancerTypes()} : What cancer types are hosted on the server?
+For example, TCGA glioblastoma or TCGA ovarian cancer.
+}
+\item{
+\texttt{getGeneticProfiles()} : What genetic profile types are available for
+cancer type X? For example, mRNA expression or copy number alterations.
+}
+\item{
+\texttt{getCaseLists()} : what case sets are available for cancer type X? For
+example, all samples or only samples corresponding to a given cancer subtype.
+}
+\item{
+\texttt{getProfileData()}: Retrieve slices of genomic data.  For
+example, a client can retrieve all mutation data for PTEN and EGFR in
+TCGA glioblastoma.
+}
+\end{itemize}
+
+Each of these functions will be briefly described in the following
+sections. The last part of this document includes some concrete examples
+of how to access and plot the data.
+
+The purpose of this document is to give the reader a quick overview of
+the \texttt{cgdsr} package. Please refer to the corresponding R manual
+pages for a more detailed explanation of arguments and output for each
+function.
+
+\section{The CGDS R interface}
+
+\subsection{\texttt{CGDS()} : Create a CGDS connection object}
+Initially, we will establish a connection to the public CGDS
+server hosted by Memorial Sloan-Kettering Cancer Center. The function
+for creating a CGDS connection object requires the URL of the CGDS
+server service, in this case \url{http://cbio.mskcc.org/cgds-public/}, as an argument.
+
+<<>>=
+library(cgdsr)
+# Create CGDS object
+mycgds = CGDS("http://cbio.mskcc.org/cgds-public/")
+@
+
+The variable \texttt{mycgds} is now a CGDS connection object
+pointing at the URL for the public CGDS server. This connection object must
+be included as an argument to all subsequent interface
+calls. Optionally, we can now perform a set of simple tests of the data
+returned from the CGDS connection object using the \texttt{test} function:
+
+<<>>=
+# Test the CGDS endpoint URL using a few simple API tests
+test(mycgds) 
+@
+
+\subsection{\texttt{getCancerTypes()} : Retrieve a set of available cancer types}
+
+Having created a CGDS connection object, we can now retrieve a data
+frame with available cancer types using the \texttt{getCancerTypes} function: 
+
+<<>>=
+# Get list of cancer types at server
+getCancerTypes(mycgds)[,c(1,2)]
+@
+
+Here we are only showing the first two columns, the cancer type ID and
+short name, of the result data frame. There is also a third column,
+a longer description of the cancer type. The cancer type ID must be
+used in subsequent interface calls to retrieve case lists and genetic
+data profiles (see below).
+
+\subsection{\texttt{getGeneticProfiles()} : Retrieve genetic data profiles for a specific cancer type}
+This function queries the CGDS API and returns the available genetic
+profiles, e.g. mutation or copy number profiles, stored about a
+specific cancer type. Below we list the current genetic profiles for
+the TCGA glioblastoma cancer type:
+
+<<>>=
+getGeneticProfiles(mycgds,'gbm')[,c(1:2)]
+@
+
+Here we are only listing the first two columns, genetic profile ID and
+short name, of the resulting data frame. Please refer to the R manual
+pages for a more extended specification of the arguments and output.
+
+
+\subsection{\texttt{getCaseLists()} : Retrieve case lists for a specific cancer type}
+This function queries the CGDS API and returns available case lists
+for a specific cancer type. For example, within a particular study, only
+some cases may have sequence data, and another subset of cases may
+have been sequenced and treated with a specific therapeutic protocol.  Multiple 
+case lists may be associated with each cancer type, and this method
+enables you to retrieve meta-data regarding all of these case
+lists. Below we list the current case lists for the TCGA glioblastoma
+cancer type:
+
+<<>>=
+getCaseLists(mycgds,'gbm')[,c(1:2)]
+@
+
+Here we are only listing the first two columns, case list ID and
+short name, of the resulting data frame. Please refer to the R manual
+pages for a more extended specification of the arguments and output.
+
+\subsection{\texttt{getProfileData()} : Retrieve genomic profile data for genes and genetic profiles}
+The function queries the CGDS API and returns data based on gene(s),
+genetic profile(s), and a case list. The function only allows
+specifying a list of genes and a single genetic profile, or oppositely
+a single gene and a list of genetic profiles. Importantly, the format of the output
+data frame depends on if a single or a list of genes was specified in
+the arguments. Below we are retrieving mRNA expression and copy number
+alteration genetic profiles for the NF1 gene in all samples of the TCGA glioblastoma
+cancer type:
+
+<<>>=
+getProfileData(mycgds, "NF1", c("gbm_cna_rae","gbm_mrna"), "gbm_all")[,c(1:5)]
+@
+
+We are here only showing the first five columns, the remaining columns
+are data for the remaining samples. In the next example, we are
+retrieving mRNA expression data for the MDM2 and MDM4 genes:
+
+<<>>=
+getProfileData(mycgds, c("MDM2","MDM4"), "gbm_mrna", "gbm_all")[,c(1:5)]
+@
+
+We are again only showing the first five columns, the remaining columns
+are data for the remaining samples.
+
+\section{Examples}
+
+\subsection{Example 1: Association of NF1 copy number alteration and mRNA expression in glioblastoma}
+As a simple example, we will generate a plot of the association between
+copy number alteration (CNA) status and mRNA expression change for the
+NF1 tumor suprpressor gene in glioblastoma. This plot is very similar
+to Figure 2b in the TCGA research network paper on glioblastoma
+(McLendon et al. 2008). The mRNA expression of NF1 has been 
+median adjusted on the gene level (by globally subtracting the median expression
+level of NF1 across all samples).
+
+\begin{center}
+<<fig=TRUE,echo=TRUE>>=
+df1 = getProfileData(mycgds, "NF1", c("gbm_cna_rae","gbm_mrna"), "gbm_all")
+df2 = data.frame(t(df1[,-c(1:4)]))
+names(df2) = c("CNA", "MRNA")
+head(df2)
+boxplot(df2$MRNA ~ df2$CNA, main="NF1 : CNA status vs mRNA expression", xlab="CNA status", ylab="mRNA expression", outpch = NA)
+stripchart(df2$MRNA ~df2$CNA, vertical=T, add=T, method="jitter",pch=1,col='red')
+@
+\end{center}
+
+\subsection{Example 2: MDM2 and MDM4 mRNA expression levels in glioblastoma}
+In this example, we evaluate the relationship of MDM2 and MDM4
+expression levels in glioblastoma. mRNA expression levels of MDM2 and MDM4 have been 
+median adjusted on the gene level (by globally subtracting the median expression
+level of the individual gene across all samples).
+
+\begin{center}
+<<fig=TRUE,echo=TRUE>>=
+df1 = getProfileData(mycgds, c("MDM2","MDM4"), "gbm_mrna", "gbm_all")
+df2 = data.frame(t(df1[,-c(1:2)]))
+names(df2) = c("MDM2", "MDM4")
+head(df2)
+plot(df2, main="MDM2 and MDM4 mRNA expression", xlab="MDM2 mRNA expression", ylab="MDM4 mRNA expression")
+@
+\end{center}
+
+\subsection{Example 3: Comparing expression of PTEN in primary and metastatic
+  prostate cancer tumors}
+In this example we plot the mRNA expression levels of PTEN in primary
+and metastatic prostate cancer tumors.
+
+\begin{center}
+<<fig=TRUE,echo=TRUE>>=
+df1.pri = getProfileData(mycgds, "PTEN", "pca_mrna", "pca_primary")
+df2.pri = as.numeric(df1.pri[,-c(1,2)])
+df1.met = getProfileData(mycgds, "PTEN", "pca_mrna", "pca_mets")
+df2.met = as.numeric(df1.met[,-c(1,2)])
+head(df2.pri)
+head(df2.met)
+boxplot(list(df2.pri,df2.met), main="PTEN expression in primary and metastatic tumors", xlab="Tumor type", ylab="PTEN mRNA expression",names=c('primary','metastatic'), outpch = NA)
+stripchart(list(df2.pri,df2.met), vertical=T, add=T, method="jitter",pch=1,col='red')
+@
+\end{center}
+
+\end{document}
