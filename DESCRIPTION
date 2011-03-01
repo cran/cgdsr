@@ -2,8 +2,8 @@ Package: cgdsr
 Type: Package
 Title: R-Based API for accessing the MSKCC Cancer Genomics Data Server
         (CGDS).
-Version: 1.0.14
-Date: 2010-11-03
+Version: 1.1
+Date: 2011-03-01
 Author: Anders Jacobsen
 Maintainer: <jacobsen@cbio.mskcc.org>
 Description: The package provides a basic set of R functions for
@@ -14,6 +14,6 @@ License: GPL
 LazyLoad: yes
 Depends: R.oo
 URL: http://cbio.mskcc.org/cgds-public/
-Packaged: 2010-11-03 13:52:10 UTC; ajac
+Packaged: 2011-03-01 21:57:58 UTC; ajac
 Repository: CRAN
-Date/Publication: 2010-12-09 20:32:45
+Date/Publication: 2011-03-02 11:33:46

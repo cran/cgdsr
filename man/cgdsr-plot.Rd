@@ -1,0 +1,92 @@
+\name{cgdsr-plot}
+\alias{cgdsr-plot}
+\alias{plot}
+\alias{plot.CGDS}
+\title{Generic plot function for CGDS API data.}
+\description{Queries the CGDS API and plots data for specified genes and genetic profiles.}
+\usage{\method{plot}{CGDS}(x,cancerType, genes, geneticProfiles,
+caseList, cases, skin, skin.normals, skin.col.gp, ...)}
+\arguments{
+  \item{x}{A CGDS object (required)}
+  \item{cancerType}{Cancer type ID (required)}
+  \item{genes}{A vector of gene names or a String specifying a single gene (required)}
+  \item{geneticProfiles}{ A vector of genetic profile IDs or String specifying
+    a single genetic profile (required)}
+  \item{caseList}{A case list ID}
+  \item{cases}{A vector of case IDs)}
+  \item{skin}{A string specifying which plotting layout skin to use
+    (default is continous data 'cont')}
+  \item{skin.normals}{Specify a case list ID with normal samples, only
+    some skins handle normal data.)}
+  \item{skin.col.gp}{Specify a vector of additional case list IDs to use
+    for color coding of data points. Color coding is only handled by
+    some skins.)}
+  \item{...}{Not used.}
+}
+\details{Queries the CGDS API and plots data for specified genes and
+  genetic profiles.
+
+  The following combinations are allowed:
+  \enumerate{
+    \item 1 gene and 1 genetic profile. Plots genetic profile data histogram for specified gene.
+    \item 2 genes and 1 genetic profile. Scatter plot of continuous genetic profile data for the two genes.
+    \item 3 1 gene and 2 genetic profiles. Scatterplot or boxplot
+    relating two genetic profile datasets for single gene.
+  }
+
+  The function currently implements the following skins:
+  \enumerate{
+    \item \var{cont}: This is the default skin. It treats all data as
+    being continuous.
+    \item \var{disc}: Requires a single gene and a single genetic
+    profile. The genetic profile data is handled as a discrete dataset and
+    barplot is returned.
+    being continuous.
+    \item \var{disc_cont}: Requires two genetic profiles. The first dataset is
+    handled as being discrete data, and the function generates a boxplot
+    with distributions for each level of the discrete genetic profile.
+    \item \var{cna_mrna_mut}: This skin plots mRNA expression level as
+    function of copy number status for a given gene. Data points are
+    colored by mutation status if specified (\var{skin.col.gp}), and
+    normal data points are included if specified (\var{skin.normals}).
+    \item \var{cna_mrna_mut}: This skin plots mRNA expression level as
+    function of DNA methylation status for a given gene. Data points are
+    colored by copy number and mutation status if specified (two element
+    vector of copy number and mutation genetic profiles specified for
+    \var{skin.col.gp}). Normal data points are included if specified
+    (\var{skin.normals}).    
+  }
+  
+}
+\author{
+<jacobsen@cbio.mskcc.org>
+}
+\references{
+  CGDS public server at MSKCC: http://cbio.mskcc.org/cgds-public/
+}
+\seealso{
+\code{\link{cgdsr}},\code{\link{CGDS}},\code{\link{getCancerTypes}},\code{\link{getGeneticProfiles}},\code{\link{getProfileData}}
+}
+\examples{
+# Create CGDS object
+mycgds = CGDS("http://cbio.mskcc.org/cgds-public/")
+
+# Get list of cancer types at server
+getCancerTypes(mycgds)
+
+# Get available case lists (collection of samples) for a given cancer type  
+mycancertype = getCancerTypes(mycgds)[1,1]
+mycaselist = getCaseLists(mycgds,mycancertype)[1,1]
+
+# Get available genetic profiles
+mygeneticprofile = getGeneticProfiles(mycgds,mycancertype)[4,1]
+
+# histogram of genetic profile data for gene
+plot(mycgds,mycancertype,'MDM2',mygeneticprofile,mycaselist)
+
+# scatter plot of genetic profile data for two genes
+plot(mycgds,mycancertype,c('MDM2','MDM4'),mygeneticprofile,mycaselist)
+
+# See vignette for more details ...
+
+}

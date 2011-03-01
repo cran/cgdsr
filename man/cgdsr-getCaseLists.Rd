@@ -7,10 +7,10 @@
 \description{Queries the CGDS API and returns available case lists for a
   specific cancer type.
 }
-\usage{\method{getCaseLists}{CGDS}(x,cancerTypeID,...)}
+\usage{\method{getCaseLists}{CGDS}(x,cancerType,...)}
 \arguments{
   \item{x}{A CGDS object (required)}
-  \item{cancerTypeID}{Cancer type ID (required)}
+  \item{cancerType}{Cancer type ID (required)}
   \item{...}{Not used.}
 }
 \value{A data.frame with five columns:

@@ -7,10 +7,10 @@
   profiles, e.g. mutation or copy number profiles, stored about a
   specific cancer type.
 }
-\usage{\method{getGeneticProfiles}{CGDS}(x,cancerTypeID,...)}
+\usage{\method{getGeneticProfiles}{CGDS}(x,cancerType,...)}
 \arguments{
   \item{x}{A CGDS object (required)}
-  \item{cancerTypeID}{Cancer type ID (required)}
+  \item{cancerType}{Cancer type ID (required)}
   \item{...}{Not used.}
 }
 \value{A data.frame with six columns:

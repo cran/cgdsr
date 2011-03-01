@@ -5,34 +5,26 @@
 \title{Retrieves genomic profile data for genes and genetic profiles.}
 \description{Queries the CGDS API and returns data based on gene(s),
   genetic profile(s),  and a case list.}
-\usage{\method{getProfileData}{CGDS}(x,genes,geneticProfiles,caseListID,...)}
+\usage{\method{getProfileData}{CGDS}(x,genes,geneticProfiles,caseList,cases,...)}
 \arguments{
   \item{x}{A CGDS object (required)}
   \item{genes}{A vector of gene names or a String specifying a single gene (required)}
   \item{geneticProfiles}{ A vector of genetic profile IDs or String specifying
     a single genetic profile (required)}
-  \item{caseListID}{A case list ID (required)}
+  \item{caseList}{A case list ID}
+  \item{cases}{A vector of case IDs)}
   \item{...}{Not used.}
 }
-\value{When requesting one or multiple genes and a single genetic profile ID,
-you will receive a data.frame with the following columns:
-\enumerate{
-\item \var{GENE_ID}:  Entrez Gene ID
-\item \var{COMMON}:  HUGO Gene Symbol
-\item Columns 3 - N:  Data in columns for each case/sample
-}
+\value{
 
-When requesting a single gene and multiple geneic profile IDs, you will
-receive a data.frame with the following columns:
+When requesting one or multiple genes and a single genetic profile,
+the function returns a data.frame with genetic profile data in columns for each gene.
 
-\enumerate{
-  \item \var{GENETIC_PROFILE_ID}:  The Genetic Profile ID.
-  \item \var{ALTERATION_TYPE}:  The Genetic Alteration Type, e.g. MUTATION,
-MUTATION_EXTENDED, COPY_NUMBER_ALTERATION, or MRNA_EXPRESSION.
-\item \var{GENE_ID}:  Entrez Gene ID.\
-\item \var{COMMON}:  HUGO Gene Symbol.
-\item Columns 5 - N:  Data in columns for each case/sample.
-}
+When requesting a single gene and multiple genetic profiles,
+the function returns a data.frame containing columns with data for each genetic profile.
+
+Cases can be specified either through a case list ID, or a vector of
+case IDs.
 }
 \details{ Only one list is allowed, specify either a list of genes or
   genetic profiles. The format of the output data.frame depends on if
@@ -69,4 +61,9 @@ getProfileData(mycgds,'HMGA2',mygeneticprofile,mycaselist)
 
 # Get data slice for multiple genetic profiles and single gene
 getProfileData(mycgds,'HMGA2',getGeneticProfiles(mycgds,mycancertype)[c(3,4),1],mycaselist)
+
+# Get the same dataset from a vector of case IDs
+cases = unlist(strsplit(getCaseLists(mycgds,mycancertype)[1,'case_ids'],' '))
+getProfileData(mycgds,'HMGA2',getGeneticProfiles(mycgds,mycancertype)[c(3,4),1],cases=cases)
+
 }

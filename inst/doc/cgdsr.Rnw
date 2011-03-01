@@ -137,19 +137,17 @@ alteration genetic profiles for the NF1 gene in all samples of the TCGA glioblas
 cancer type:
 
 <<>>=
-getProfileData(mycgds, "NF1", c("gbm_cna_rae","gbm_mrna"), "gbm_all")[,c(1:5)]
+getProfileData(mycgds, "NF1", c("gbm_cna_rae","gbm_mrna"), "gbm_all")[c(1:5),]
 @
 
-We are here only showing the first five columns, the remaining columns
-are data for the remaining samples. In the next example, we are
+We are here only showing the first five rows of the data frame. In the next example, we are
 retrieving mRNA expression data for the MDM2 and MDM4 genes:
 
 <<>>=
-getProfileData(mycgds, c("MDM2","MDM4"), "gbm_mrna", "gbm_all")[,c(1:5)]
+getProfileData(mycgds, c("MDM2","MDM4"), "gbm_mrna", "gbm_all")[c(1:5),]
 @
 
-We are again only showing the first five columns, the remaining columns
-are data for the remaining samples.
+We are again only showing the first five rows of the data frame.
 
 \section{Examples}
 
@@ -163,13 +161,20 @@ median adjusted on the gene level (by globally subtracting the median expression
 level of NF1 across all samples).
 
 \begin{center}
-<<fig=TRUE,echo=TRUE>>=
-df1 = getProfileData(mycgds, "NF1", c("gbm_cna_rae","gbm_mrna"), "gbm_all")
-df2 = data.frame(t(df1[,-c(1:4)]))
-names(df2) = c("CNA", "MRNA")
-head(df2)
-boxplot(df2$MRNA ~ df2$CNA, main="NF1 : CNA status vs mRNA expression", xlab="CNA status", ylab="mRNA expression", outpch = NA)
-stripchart(df2$MRNA ~df2$CNA, vertical=T, add=T, method="jitter",pch=1,col='red')
+<<NF1plot1,fig=TRUE,echo=TRUE>>=
+df = getProfileData(mycgds, "NF1", c("gbm_cna_rae","gbm_mrna"), "gbm_all")
+head(df)
+boxplot(df[,2] ~ df[,1], main="NF1 : CNA status vs mRNA expression", xlab="CNA status", ylab="mRNA expression", outpch = NA)
+stripchart(df[,2] ~ df[,1], vertical=T, add=T, method="jitter",pch=1,col='red')
+@
+\end{center}
+
+Alternatively, the generic \texttt{cgdsr} \texttt{plot()}
+function can be used to generate a similar plot:
+
+\begin{center}
+<<NF1plot2,fig=TRUE,echo=TRUE>>=
+plot(mycgds, "gbm", "NF1", c("gbm_cna_rae","gbm_mrna"), "gbm_all", skin = 'disc_cont')
 @
 \end{center}
 
@@ -180,14 +185,22 @@ median adjusted on the gene level (by globally subtracting the median expression
 level of the individual gene across all samples).
 
 \begin{center}
-<<fig=TRUE,echo=TRUE>>=
-df1 = getProfileData(mycgds, c("MDM2","MDM4"), "gbm_mrna", "gbm_all")
-df2 = data.frame(t(df1[,-c(1:2)]))
-names(df2) = c("MDM2", "MDM4")
-head(df2)
-plot(df2, main="MDM2 and MDM4 mRNA expression", xlab="MDM2 mRNA expression", ylab="MDM4 mRNA expression")
+<<MDM2plot1,fig=TRUE,echo=TRUE>>=
+df = getProfileData(mycgds, c("MDM2","MDM4"), "gbm_mrna", "gbm_all")
+head(df)
+plot(df, main="MDM2 and MDM4 mRNA expression", xlab="MDM2 mRNA expression", ylab="MDM4 mRNA expression")
 @
 \end{center}
+
+Alternatively, the generic \texttt{cgdsr} \texttt{plot()}
+function can be used to generate a similar plot:
+
+\begin{center}
+<<MDMplot2,fig=TRUE,echo=TRUE>>=
+plot(mycgds, "gbm", c("MDM2","MDM4"), "gbm_mrna" ,"gbm_all")
+@
+\end{center}
+
 
 \subsection{Example 3: Comparing expression of PTEN in primary and metastatic
   prostate cancer tumors}
@@ -195,15 +208,13 @@ In this example we plot the mRNA expression levels of PTEN in primary
 and metastatic prostate cancer tumors.
 
 \begin{center}
-<<fig=TRUE,echo=TRUE>>=
-df1.pri = getProfileData(mycgds, "PTEN", "pca_mrna", "pca_primary")
-df2.pri = as.numeric(df1.pri[,-c(1,2)])
-df1.met = getProfileData(mycgds, "PTEN", "pca_mrna", "pca_mets")
-df2.met = as.numeric(df1.met[,-c(1,2)])
-head(df2.pri)
-head(df2.met)
-boxplot(list(df2.pri,df2.met), main="PTEN expression in primary and metastatic tumors", xlab="Tumor type", ylab="PTEN mRNA expression",names=c('primary','metastatic'), outpch = NA)
-stripchart(list(df2.pri,df2.met), vertical=T, add=T, method="jitter",pch=1,col='red')
+<<PTENplot,fig=TRUE,echo=TRUE>>=
+df.pri = getProfileData(mycgds, "PTEN", "pca_mrna", "pca_primary")
+head(df.pri)
+df.met = getProfileData(mycgds, "PTEN", "pca_mrna", "pca_mets")
+head(df.met)
+boxplot(list(t(df.pri),t(df.met)), main="PTEN expression in primary and metastatic tumors", xlab="Tumor type", ylab="PTEN mRNA expression",names=c('primary','metastatic'), outpch = NA)
+stripchart(list(t(df.pri),t(df.met)), vertical=T, add=T, method="jitter",pch=1,col='red')
 @
 \end{center}
 
