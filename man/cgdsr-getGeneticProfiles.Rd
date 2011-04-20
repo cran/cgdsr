@@ -32,7 +32,7 @@ MUTATION, MUTATION_EXTENDED, COPY_NUMBER_ALTERATION, MRNA_EXPRESSION.
 <jacobsen@cbio.mskcc.org>
 }
 \references{
-  CGDS public server at MSKCC: http://cbio.mskcc.org/cgds-public/
+ cBio Cancer Genomics Portal: \url{http://www.cbioportal.org/cgx/}
 }
 \seealso{
 \code{\link{cgdsr}},\code{\link{CGDS}},\code{\link{getCancerTypes}},\code{\link{getCaseLists}},\code{\link{getProfileData}}

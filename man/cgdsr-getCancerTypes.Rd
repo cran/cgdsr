@@ -24,7 +24,7 @@ source of study.
 <jacobsen@cbio.mskcc.org>
 }
 \references{
-  CGDS public server at MSKCC: http://cbio.mskcc.org/cgds-public/
+ cBio Cancer Genomics Portal: \url{http://www.cbioportal.org/cgx/}
 }
 \seealso{
 \code{\link{cgdsr}},\code{\link{CGDS}},\code{\link{getGeneticProfiles}},\code{\link{getCaseLists}}

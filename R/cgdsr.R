@@ -66,6 +66,20 @@ setMethodS3("getProfileData","CGDS", function(x, genes, geneticProfiles, caseLis
   return(data.frame(m))
 })
 
+setMethodS3("getClinicalData","CGDS", function(x, caseList='', cases=c(), ...) {
+  url = paste(x$.url, "webservice.do?cmd=getClinicalData",sep="")
+
+  if (length(cases)>0) {
+    url = paste(url,"&case_list=", paste(cases,collapse=","),sep='')
+  } else {
+    url = paste(url,"&case_set_id=", caseList,sep='')
+  }
+  
+  df = processURL(x,url)
+  rownames(df) = make.names(df$case_id)
+  return(df[,-1])
+})
+
 setMethodS3("plot","CGDS", function(x, cancerType, genes, geneticProfiles, caseList='', cases=c(), skin='cont', skin.normals='', skin.col.gp = c(), ...) {
 
   errormsg <- function(msg,error=TRUE) {
@@ -183,9 +197,9 @@ setMethodS3("plot","CGDS", function(x, cancerType, genes, geneticProfiles, caseL
     ylim=range(df.nona[,geneticProfiles[2]],na.rm=TRUE)
     labels=seq(-3,2)
     names(labels)=c("Normal","Homdel","Hetloss","Diploid","Gain","Amp")
-    labels.inuse = sort(unique(df[,geneticProfiles[1]])) # sort removes any NA
+    labels.inuse = sort(unique(df.nona[,geneticProfiles[1]])) # sort removes any NA
     
-    boxplot(df[,geneticProfiles[2]] ~ df[,geneticProfiles[1]], main='', outline=FALSE,
+    boxplot(df.nona[,geneticProfiles[2]] ~ df.nona[,geneticProfiles[1]], main='', outline=FALSE,
             xlab = paste(genes,", ",gpaxisnames[geneticProfiles[1]],sep=""),
             ylab = paste(genes,", ",gpaxisnames[geneticProfiles[2]],sep=""),
             border="gray",ylim=ylim, axes=FALSE, outpch = NA)
@@ -200,11 +214,11 @@ setMethodS3("plot","CGDS", function(x, cancerType, genes, geneticProfiles, caseL
     df.nona=df.nona[order(df.nona[,geneticProfiles[1]]),]
     xy=list()
     xy$MRNA=df.nona[,geneticProfiles[2]]
-    
+
     cats=cbind(1:length(labels.inuse),as.data.frame(table(df.nona[,geneticProfiles[1]])))
     colnames(cats)=c("X","Class","Count")
     rownames(cats)=names(labels)[match(cats[,2],labels)]
-    
+
     xy$JITTER = unlist( apply(cats,1, function(cc) {
       y=rep.int(as.numeric(cc[1]),as.numeric(cc[3]))
       y=y+stats::runif(length(y),-0.1,0.1)
@@ -322,7 +336,7 @@ setMethodS3("plot","CGDS", function(x, cancerType, genes, geneticProfiles, caseL
 })
             
 setMethodS3("test","CGDS", function(x, ...) {
-  checkEq = function(a,b) { if (identical(a,b)) "OK\n" else "FAILURE!\n" }
+  checkEq = function(a,b) { if (identical(a,b)) "OK\n" else "FAILED!\n" }
   cancertypes = getCancerTypes(x)
   cat('getCancerTypes... ',
       checkEq(colnames(cancertypes),c("cancer_type_id","name","description")))
@@ -344,6 +358,22 @@ setMethodS3("test","CGDS", function(x, ...) {
       checkEq(colnames(getGeneticProfiles(x,'xxx')),
               'Error...No.genetic.profiles.available.for.cancer_type_id...xxx.'))
 
+  # clinical data
+  # check colnames
+  cat('getClinicalData (1/4) ... ',
+      checkEq(colnames(getClinicalData(x,'ova_all')),
+              c("overall_survival_months","overall_survival_status","disease_free_survival_months",
+                "disease_free_survival_status","age_at_diagnosis")))
+  # check value of overall_survival_months
+  cat('getClinicalData (2/4) ... ',
+      checkEq(getClinicalData(x,'ova_all')['TCGA.04.1331','overall_survival_months'], 43.8))
+  # check value of age_at_diagnosis
+  cat('getClinicalData (3/4) ... ',
+      checkEq(getClinicalData(x,'ova_all')['TCGA.04.1331','age_at_diagnosis'], 79.04))
+  # check cases parameter
+  cat('getClinicalData (4/4) ... ',
+      checkEq(getClinicalData(x,cases=c('TCGA-04-1331'))['TCGA.04.1331','age_at_diagnosis'], 79.04))
+  
   # check one gene, one profile
   cat('getProfileData (1/7) ... ',
       checkEq(colnames(getProfileData(x,'NF1','gbm_mrna','gbm_all')),

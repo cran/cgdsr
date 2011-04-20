@@ -3,10 +3,15 @@
 \alias{cgdsr}
 \docType{package}
 \title{
-CGDS-R : a library for accessing the MSKCC Cancer Genomics Data Server (CGDS).
+CGDS-R : a library for accessing data in the MSKCC Cancer Genomics Data Server
+(CGDS). 
 }
 \description{
-The package provides a basic set of R functions for querying the Cancer Genomics Data Server (CGDS), hosted by the Computational Biology Center at Memorial-Sloan-Kettering Cancer Center (MSKCC).
+The package provides a basic set of R functions for querying the Cancer
+Genomics Data Server (CGDS), hosted by the Computational Biology Center
+at Memorial-Sloan-Kettering Cancer Center (MSKCC). Read more about this
+service at the cBio Cancer Genomics Portal,
+\url{http://www.cbioportal.org/cgx/}.
 }
 \details{
 \tabular{ll}{
@@ -34,18 +39,22 @@ subtype.
 \item \var{getProfileData()}: Retrieve slices of genomic data.  For
 example, a client can retrieve all mutation data from PTEN and EGFR in
 TCGA glioblastoma.
+\item \var{getClinicalData()}: Retrieve clinical data (e.g. patient
+survival time and age) for a given case list.
 }
 }
 \author{
 <jacobsen@cbio.mskcc.org>
 }
 \references{
-  CGDS public server at MSKCC: http://cbio.mskcc.org/cgds-public/
+  cBio Cancer Genomics Portal: \url{http://www.cbioportal.org/cgx/}
 }
 \keyword{ package }
 
 \seealso{
-\code{\link{CGDS}},\code{\link{getCancerTypes}},\code{\link{getGeneticProfiles}},\code{\link{getCaseLists}},\code{\link{getProfileData}}
+\code{\link{CGDS}}, \code{\link{getCancerTypes}},
+\code{\link{getGeneticProfiles}}, \code{\link{getCaseLists}},
+\code{\link{getProfileData}}, \code{\link{getClinicalData}}.
 }
 
 \examples{
@@ -67,4 +76,7 @@ mygeneticprofile = getGeneticProfiles(mycgds,mycancertype)[4,1]
 
 # Get data slices for a specified list of genes, genetic profile and case list
 getProfileData(mycgds,c('BRCA1','BRCA2'),mygeneticprofile,mycaselist)
+
+# Get clinical data for the case list
+myclinicaldata = getClinicalData(mycgds,mycaselist)
 }

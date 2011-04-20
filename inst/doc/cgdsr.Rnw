@@ -20,8 +20,11 @@
 
 This package provides a basic set of R functions for querying
 the Cancer Genomic Data Server (CGDS) hosted by the Computational
-Biology Center at Memorial-Sloan-Kettering Cancer Center (MSKCC). In
-summary, the library can issue the following types of queries:
+Biology Center (cBio) at the Memorial Sloan-Kettering Cancer Center (MSKCC). This
+service is a part of the cBio Cancer Genomics Portal,
+\url{http://www.cbioportal.org/cgx/}.
+
+In summary, the library can issue the following types of queries:
 
 \begin{itemize}
 \item{
@@ -40,6 +43,10 @@ example, all samples or only samples corresponding to a given cancer subtype.
 \texttt{getProfileData()}: Retrieve slices of genomic data.  For
 example, a client can retrieve all mutation data for PTEN and EGFR in
 TCGA glioblastoma.
+}
+\item{
+\texttt{getClinicalData()}: Retrieve clinical data (e.g. patient
+survival time and age) for a given cancer type and list of cases.
 }
 \end{itemize}
 
@@ -148,6 +155,38 @@ getProfileData(mycgds, c("MDM2","MDM4"), "gbm_mrna", "gbm_all")[c(1:5),]
 @
 
 We are again only showing the first five rows of the data frame.
+
+\subsection{\texttt{getClinicalData()} : Retrieve clinical data for a list of cases}
+The function queries the CGDS API and returns available clinical data (e.g. patient
+survival time and age) for a given case list. Results are returned in
+a data frame with a row for each case and a column for each clinical
+attribute. The available clinical attributes are:
+
+\begin{itemize}
+\item{
+\texttt{overall\_survival\_months}: Overall survival, in months.
+}
+\item{
+\texttt{overall\_survival\_status}: Overall survival status, usually
+indicated as "LIVING" or "DECEASED".
+}
+\item{
+\texttt{disease\_free\_survival\_months}: Disease free survival, in months.
+}
+\item{
+\texttt{disease\_free\_survival\_status}: Disease free survival status, usually indicated as "DiseaseFree" or "Recurred/Progressed".
+}
+\item{
+\texttt{age\_at\_diagnosis}: Age at diagnosis.
+}
+\end{itemize}
+
+Below we retrieve clinical data for the TCGA ovarian cancer dataset (only first five
+cases/rows are shown):
+
+<<>>=
+getClinicalData(mycgds, "ova_all")[c(1:5),]
+@
 
 \section{Examples}
 
