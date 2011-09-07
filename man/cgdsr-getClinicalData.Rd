@@ -2,7 +2,7 @@
 \alias{cgdsr-getClinicalData}
 \alias{getClinicalData}
 \alias{getClinicalData.CGDS}
-\title{Get clinical data for cancer type}
+\title{Get clinical data for cancer study}
 \description{Queries the CGDS API and returns clinical data for
   a given case list.}
 \usage{\method{getClinicalData}{CGDS}(x, caseList, cases, ...)}
@@ -27,20 +27,20 @@ usually indicated as "DiseaseFree" or "Recurred/Progressed".
 <jacobsen@cbio.mskcc.org>
 }
 \references{
-  cBio Cancer Genomics Portal: \url{http://www.cbioportal.org/cgx/}
+  cBio Cancer Genomics Portal: \url{http://www.cbioportal.org/}
 }
 \seealso{
 \code{\link{cgdsr}},\code{\link{CGDS}},\code{\link{getCaseLists}}
 }
 \examples{
 # Create CGDS object
-mycgds = CGDS("http://cbio.mskcc.org/cgds-public/")
+mycgds = CGDS("http://www.cbioportal.org/public-portal/")
 
-getCancerTypes(mycgds)
+getCancerStudies(mycgds)
 
-# Get available case lists (collection of samples) for a given cancer type  
-mycancertype = getCancerTypes(mycgds)[1,1]
-mycaselist = getCaseLists(mycgds,mycancertype)[1,1]
+# Get available case lists (collection of samples) for a given cancer study 
+mycancerstudy = getCancerStudies(mycgds)[2,1]
+mycaselist = getCaseLists(mycgds,mycancerstudy)[1,1]
 
 # Get clinical data for caselist
 getClinicalData(mycgds,mycaselist)

@@ -16,20 +16,20 @@ setMethodS3("setVerbose","CGDS", function(x, verbose, ...) {
   return(verbose)
 })
 
-setMethodS3("getCancerTypes","CGDS", function(x, ...) {
-  url = paste(x$.url, "webservice.do?cmd=getCancerTypes&",sep="")
+setMethodS3("getCancerStudies","CGDS", function(x, ...) {
+  url = paste(x$.url, "webservice.do?cmd=getCancerStudies&",sep="")
   df = processURL(x,url)
   return(df)
 })
 
-setMethodS3("getCaseLists","CGDS", function(x, cancerType, ...) {
-  url = paste(x$.url, "webservice.do?cmd=getCaseLists&cancer_type_id=", cancerType, sep="")
+setMethodS3("getCaseLists","CGDS", function(x, cancerStudy, ...) {
+  url = paste(x$.url, "webservice.do?cmd=getCaseLists&cancer_study_id=", cancerStudy, sep="")
   df = processURL(x,url)
   return(df)
 })
 
-setMethodS3("getGeneticProfiles","CGDS", function(x, cancerType, ...) {
-  url = paste(x$.url, "webservice.do?cmd=getGeneticProfiles&cancer_type_id=", cancerType, sep="")
+setMethodS3("getGeneticProfiles","CGDS", function(x, cancerStudy, ...) {
+  url = paste(x$.url, "webservice.do?cmd=getGeneticProfiles&cancer_study_id=", cancerStudy, sep="")
   df = processURL(x,url)
   return(df)
 })
@@ -80,7 +80,7 @@ setMethodS3("getClinicalData","CGDS", function(x, caseList='', cases=c(), ...) {
   return(df[,-1])
 })
 
-setMethodS3("plot","CGDS", function(x, cancerType, genes, geneticProfiles, caseList='', cases=c(), skin='cont', skin.normals='', skin.col.gp = c(), ...) {
+setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, caseList='', cases=c(), skin='cont', skin.normals='', skin.col.gp = c(), ...) {
 
   errormsg <- function(msg,error=TRUE) {
     # return empty plot with text
@@ -112,7 +112,7 @@ setMethodS3("plot","CGDS", function(x, cancerType, genes, geneticProfiles, caseL
   if (length(geneticProfiles) == 2 & ncol(df) != 2) { return(errormsg("geneticProfile ID not found:", setdiff(geneticProfiles,colnames(df)))) }
   
   # get geneticProfiles annotation for axis labels
-  gps = getGeneticProfiles(x, cancerType)
+  gps = getGeneticProfiles(x, cancerStudy)
   if (nrow(gps) == 0) { errormsg(colnames(gps[1])) }
   rownames(gps) = gps[,1]
   gpaxisnames = gps[geneticProfiles,'genetic_profile_name']
@@ -249,7 +249,7 @@ setMethodS3("plot","CGDS", function(x, cancerType, genes, geneticProfiles, caseL
         mt=list()
         mt$pch=c(21,23,24,25,22)
         mt$type=c("missense","nonsense","splice","shift","in_frame")
-        mt$pattern=c("^p[.][A-Z][0-9]+[A-Z]$","[*]$","^e[0-9]","fs$","In_Frame_Del")
+        mt$pattern=c("^[a-zA-Z][0-9]+[a-zA-Z]$","[*]$","^e.+[0-9]$","fs$","In_Frame_Del")
         mt$bg=c("goldenrod","darkblue","darkgray","black","goldenrod")
         mt=as.data.frame(mt)
         for(i in 1:nrow(mt)) {
@@ -272,12 +272,14 @@ setMethodS3("plot","CGDS", function(x, cancerType, genes, geneticProfiles, caseL
     points(xy$JITTER[xy.mut],xy$MRNA[xy.mut],pch=pch[xy.mut],cex=cex[xy.mut],col=col[xy.mut],bg=bg[xy.mut])
     box()
     
-  } else if (skin == 'meth_mrna_cna_mut') {
+  } else if (skin == 'meth_mrna_cna_mut' | skin == 'cna_mut') {
 
-    # skin uses parameters
+    # these skins use parameters
     # * skin.col.gp = (cna,mut) [optional]
     # * skin.normals = normal_case_set [optional]
 
+    # [meth_mrna_cna_mut] forces x axis range to [0,1.05] 
+        
     # fetch cna and mut data for color coding
     pch=rep(1,nrow(df))
     col=rep("black",nrow(df))
@@ -309,11 +311,20 @@ setMethodS3("plot","CGDS", function(x, cancerType, genes, geneticProfiles, caseL
       }
     }
 
+    xlim = range(df[,geneticProfiles[1]])
+    # add 15% to range, to make room for legend
+    xlim = c(min(xlim),max(xlim) + (max(xlim)-min(xlim))*0.15)
+
+    if (skin == 'meth_mrna_cna_mut') {
+      # force x axis range to [0,1.05] 
+      xlim = c(0,1.05)
+    }
+
     # now plot
     plot( df[,geneticProfiles[1]],df[,geneticProfiles[2]],main="",
          xlab=paste(genes,", ",gpaxisnames[geneticProfiles[1]],sep=""),
          ylab=paste(genes,", ",gpaxisnames[geneticProfiles[2]],sep=""),
-         xlim=c(0,1.05),pch=pch,col=col,cex=1.2
+         xlim=xlim,pch=pch,col=col,cex=1.2
          )
 
     #abline(lm(d$rna~d$methylation),col="red3",lty=2,lwd=1.5)
@@ -337,42 +348,40 @@ setMethodS3("plot","CGDS", function(x, cancerType, genes, geneticProfiles, caseL
             
 setMethodS3("test","CGDS", function(x, ...) {
   checkEq = function(a,b) { if (identical(a,b)) "OK\n" else "FAILED!\n" }
-  cancertypes = getCancerTypes(x)
-  cat('getCancerTypes... ',
-      checkEq(colnames(cancertypes),c("cancer_type_id","name","description")))
-  ct = cancertypes[1,1]
+  checkGrt = function(a,b) { if (a > b) "OK\n" else "FAILED!\n" }
+  cancerstudies = getCancerStudies(x)
+  cat('getCancerStudies... ',
+      checkEq(colnames(cancerstudies),c("cancer_study_id","name","description")))
+  ct = cancerstudies[2,1] # should be row 1 instead ...
 
   cat('getCaseLists (1/2) ... ',
       checkEq(colnames(getCaseLists(x,ct)),
               c("case_list_id","case_list_name",
-                "case_list_description","cancer_type_id","case_ids")))
+                "case_list_description","cancer_study_id","case_ids")))
   cat('getCaseLists (2/2) ... ',
       checkEq(colnames(getCaseLists(x,'xxx')),
-              'Error...No.case.lists.available.for.cancer_type_id...xxx.'))
+              'Error..Problem.when.identifying.a.cancer.study.for.the.request.'))
 
   cat('getGeneticProfiles (1/2) ... ',
       checkEq(colnames(getGeneticProfiles(x,ct)),
               c("genetic_profile_id","genetic_profile_name","genetic_profile_description",
-                "cancer_type_id","genetic_alteration_type","show_profile_in_analysis_tab")))
+                "cancer_study_id","genetic_alteration_type","show_profile_in_analysis_tab")))
   cat('getGeneticProfiles (2/2) ... ',
       checkEq(colnames(getGeneticProfiles(x,'xxx')),
-              'Error...No.genetic.profiles.available.for.cancer_type_id...xxx.'))
+              'Error..Problem.when.identifying.a.cancer.study.for.the.request.'))
 
   # clinical data
   # check colnames
-  cat('getClinicalData (1/4) ... ',
-      checkEq(colnames(getClinicalData(x,'ova_all')),
+  cat('getClinicalData (1/1) ... ',
+      checkEq(colnames(getClinicalData(x,'gbm_all')),
               c("overall_survival_months","overall_survival_status","disease_free_survival_months",
                 "disease_free_survival_status","age_at_diagnosis")))
   # check value of overall_survival_months
-  cat('getClinicalData (2/4) ... ',
-      checkEq(getClinicalData(x,'ova_all')['TCGA.04.1331','overall_survival_months'], 43.8))
-  # check value of age_at_diagnosis
-  cat('getClinicalData (3/4) ... ',
-      checkEq(getClinicalData(x,'ova_all')['TCGA.04.1331','age_at_diagnosis'], 79.04))
+  #cat('getClinicalData (2/3) ... ',
+  #    checkGrt(getClinicalData(x,'gbm_all')['TCGA.02.0080','overall_survival_months'], 89))
   # check cases parameter
-  cat('getClinicalData (4/4) ... ',
-      checkEq(getClinicalData(x,cases=c('TCGA-04-1331'))['TCGA.04.1331','age_at_diagnosis'], 79.04))
+  #cat('getClinicalData (3/3) ... ',
+  #    checkGrt(getClinicalData(x,cases=c('TCGA-02-0080'))['TCGA.02.0080','overall_survival_months'], 89))
   
   # check one gene, one profile
   cat('getProfileData (1/7) ... ',
@@ -388,15 +397,15 @@ setMethodS3("test","CGDS", function(x, ...) {
               c("gbm_mrna","gbm_mutations")))
   # check 3 cases returns matrix with 3 columns
   cat('getProfileData (4/7) ... ',
-      checkEq(rownames(getProfileData(x,'BRCA1','ova_mrna_median',cases=c('TCGA-61-2109','TCGA-61-2110','TCGA-61-2111'))),
-              make.names(c('TCGA-61-2109','TCGA-61-2110','TCGA-61-2111'))))
+      checkEq(rownames(getProfileData(x,'BRCA1','gbm_mrna',cases=c('TCGA-02-0001','TCGA-02-0003'))),
+              make.names(c('TCGA-02-0001','TCGA-02-0003'))))
   # invalid gene names return empty data.frame
   cat('getProfileData (5/7) ... ',
       checkEq(nrow(getProfileData(x,c('NF10','NF11'),'gbm_mrna','gbm_all')),as.integer(0)))
   # invalid case_list_id returns error
   cat('getProfileData (6/7) ... ',
       checkEq(colnames(getProfileData(x,'NF1','gbm_mrna','xxx')),
-              'Error...Invalid.case_set_id...xxx.'))
+              'Error..Problem.when.identifying.a.cancer.study.for.the.request.'))
   # invalid genetic_profile_id returns error
   cat('getProfileData (7/7) ... ',
     checkEq(colnames(getProfileData(x,'NF1','xxx','gbm_all')),

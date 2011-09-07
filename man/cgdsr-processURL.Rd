@@ -8,7 +8,7 @@
 <jacobsen@cbio.mskcc.org>
 }
 \references{
- cBio Cancer Genomics Portal: \url{http://www.cbioportal.org/cgx/}
+ cBio Cancer Genomics Portal: \url{http://www.cbioportal.org/}
 }
 \seealso{
 \code{\link{cgdsr}},\code{\link{CGDS}}

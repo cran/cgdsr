@@ -4,11 +4,11 @@
 \alias{plot.CGDS}
 \title{Generic plot function for CGDS API data.}
 \description{Queries the CGDS API and plots data for specified genes and genetic profiles.}
-\usage{\method{plot}{CGDS}(x,cancerType, genes, geneticProfiles,
+\usage{\method{plot}{CGDS}(x,cancerStudy, genes, geneticProfiles,
 caseList, cases, skin, skin.normals, skin.col.gp, ...)}
 \arguments{
   \item{x}{A CGDS object (required)}
-  \item{cancerType}{Cancer type ID (required)}
+  \item{cancerStudy}{cancer study ID (required)}
   \item{genes}{A vector of gene names or a String specifying a single gene (required)}
   \item{geneticProfiles}{ A vector of genetic profile IDs or String specifying
     a single genetic profile (required)}
@@ -62,30 +62,30 @@ caseList, cases, skin, skin.normals, skin.col.gp, ...)}
 <jacobsen@cbio.mskcc.org>
 }
 \references{
- cBio Cancer Genomics Portal: \url{http://www.cbioportal.org/cgx/}
+ cBio Cancer Genomics Portal: \url{http://www.cbioportal.org/}
 }
 \seealso{
-\code{\link{cgdsr}},\code{\link{CGDS}},\code{\link{getCancerTypes}},\code{\link{getGeneticProfiles}},\code{\link{getProfileData}}
+\code{\link{cgdsr}},\code{\link{CGDS}},\code{\link{getCancerStudies}},\code{\link{getGeneticProfiles}},\code{\link{getProfileData}}
 }
 \examples{
 # Create CGDS object
-mycgds = CGDS("http://cbio.mskcc.org/cgds-public/")
+mycgds = CGDS("http://www.cbioportal.org/public-portal/")
 
-# Get list of cancer types at server
-getCancerTypes(mycgds)
+# Get list of cancer studies at server
+getCancerStudies(mycgds)
 
-# Get available case lists (collection of samples) for a given cancer type  
-mycancertype = getCancerTypes(mycgds)[1,1]
-mycaselist = getCaseLists(mycgds,mycancertype)[1,1]
+# Get available case lists (collection of samples) for a given cancer study  
+mycancerstudy = getCancerStudies(mycgds)[2,1]
+mycaselist = getCaseLists(mycgds,mycancerstudy)[1,1]
 
 # Get available genetic profiles
-mygeneticprofile = getGeneticProfiles(mycgds,mycancertype)[4,1]
+mygeneticprofile = getGeneticProfiles(mycgds,mycancerstudy)[4,1]
 
 # histogram of genetic profile data for gene
-plot(mycgds,mycancertype,'MDM2',mygeneticprofile,mycaselist)
+plot(mycgds,mycancerstudy,'MDM2',mygeneticprofile,mycaselist)
 
 # scatter plot of genetic profile data for two genes
-plot(mycgds,mycancertype,c('MDM2','MDM4'),mygeneticprofile,mycaselist)
+plot(mycgds,mycancerstudy,c('MDM2','MDM4'),mygeneticprofile,mycaselist)
 
 # See vignette for more details ...
 

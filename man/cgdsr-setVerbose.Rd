@@ -14,20 +14,20 @@
 <jacobsen@cbio.mskcc.org>
 }
 \references{
- cBio Cancer Genomics Portal: \url{http://www.cbioportal.org/cgx/}
+ cBio Cancer Genomics Portal: \url{http://www.cbioportal.org/public-portal/}
 }
 \seealso{
 \code{\link{cgdsr}},\code{\link{CGDS}}
 }
 \examples{
 # Create CGDS object
-mycgds = CGDS("http://cbio.mskcc.org/cgds-public/")
+mycgds = CGDS("http://www.cbioportal.org/public-portal/")
 
-getCancerTypes(mycgds)
+getCancerStudies(mycgds)
 
 # Activate verbose logging
 setVerbose(mycgds, TRUE)
 
-getCancerTypes(mycgds)
+getCancerStudies(mycgds)
 
 }

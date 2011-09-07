@@ -22,21 +22,21 @@ This package provides a basic set of R functions for querying
 the Cancer Genomic Data Server (CGDS) hosted by the Computational
 Biology Center (cBio) at the Memorial Sloan-Kettering Cancer Center (MSKCC). This
 service is a part of the cBio Cancer Genomics Portal,
-\url{http://www.cbioportal.org/cgx/}.
+\url{http://www.cbioportal.org/}.
 
 In summary, the library can issue the following types of queries:
 
 \begin{itemize}
 \item{
-\texttt{getCancerTypes()} : What cancer types are hosted on the server?
+\texttt{getCancerStudies()} : What cancer studies are hosted on the server?
 For example, TCGA glioblastoma or TCGA ovarian cancer.
 }
 \item{
 \texttt{getGeneticProfiles()} : What genetic profile types are available for
-cancer type X? For example, mRNA expression or copy number alterations.
+cancer study X? For example, mRNA expression or copy number alterations.
 }
 \item{
-\texttt{getCaseLists()} : what case sets are available for cancer type X? For
+\texttt{getCaseLists()} : what case sets are available for cancer study X? For
 example, all samples or only samples corresponding to a given cancer subtype.
 }
 \item{
@@ -46,7 +46,7 @@ TCGA glioblastoma.
 }
 \item{
 \texttt{getClinicalData()}: Retrieve clinical data (e.g. patient
-survival time and age) for a given cancer type and list of cases.
+survival time and age) for a given cancer study and list of cases.
 }
 \end{itemize}
 
@@ -65,12 +65,12 @@ function.
 Initially, we will establish a connection to the public CGDS
 server hosted by Memorial Sloan-Kettering Cancer Center. The function
 for creating a CGDS connection object requires the URL of the CGDS
-server service, in this case \url{http://cbio.mskcc.org/cgds-public/}, as an argument.
+server service, in this case \url{http://www.cbioportal.org/public-portal/}, as an argument.
 
 <<>>=
 library(cgdsr)
 # Create CGDS object
-mycgds = CGDS("http://cbio.mskcc.org/cgds-public/")
+mycgds = CGDS("http://www.cbioportal.org/public-portal/")
 @
 
 The variable \texttt{mycgds} is now a CGDS connection object
@@ -84,30 +84,30 @@ returned from the CGDS connection object using the \texttt{test} function:
 test(mycgds) 
 @
 
-\subsection{\texttt{getCancerTypes()} : Retrieve a set of available cancer types}
+\subsection{\texttt{getCancerStudies()} : Retrieve a set of available cancer studies}
 
 Having created a CGDS connection object, we can now retrieve a data
-frame with available cancer types using the \texttt{getCancerTypes} function: 
+frame with available cancer studies using the \texttt{getCancerStudies} function: 
 
 <<>>=
-# Get list of cancer types at server
-getCancerTypes(mycgds)[,c(1,2)]
+# Get list of cancer studies at server
+getCancerStudies(mycgds)[,c(1,2)]
 @
 
-Here we are only showing the first two columns, the cancer type ID and
+Here we are only showing the first two columns, the cancer study ID and
 short name, of the result data frame. There is also a third column,
-a longer description of the cancer type. The cancer type ID must be
+a longer description of the cancer study. The cancer study ID must be
 used in subsequent interface calls to retrieve case lists and genetic
 data profiles (see below).
 
-\subsection{\texttt{getGeneticProfiles()} : Retrieve genetic data profiles for a specific cancer type}
+\subsection{\texttt{getGeneticProfiles()} : Retrieve genetic data profiles for a specific cancer study}
 This function queries the CGDS API and returns the available genetic
 profiles, e.g. mutation or copy number profiles, stored about a
-specific cancer type. Below we list the current genetic profiles for
-the TCGA glioblastoma cancer type:
+specific cancer study. Below we list the current genetic profiles for
+the TCGA glioblastoma cancer study:
 
 <<>>=
-getGeneticProfiles(mycgds,'gbm')[,c(1:2)]
+getGeneticProfiles(mycgds,'tcga_gbm')[,c(1:2)]
 @
 
 Here we are only listing the first two columns, genetic profile ID and
@@ -115,18 +115,18 @@ short name, of the resulting data frame. Please refer to the R manual
 pages for a more extended specification of the arguments and output.
 
 
-\subsection{\texttt{getCaseLists()} : Retrieve case lists for a specific cancer type}
+\subsection{\texttt{getCaseLists()} : Retrieve case lists for a specific cancer study}
 This function queries the CGDS API and returns available case lists
-for a specific cancer type. For example, within a particular study, only
+for a specific cancer study. For example, within a particular study, only
 some cases may have sequence data, and another subset of cases may
 have been sequenced and treated with a specific therapeutic protocol.  Multiple 
-case lists may be associated with each cancer type, and this method
+case lists may be associated with each cancer study, and this method
 enables you to retrieve meta-data regarding all of these case
 lists. Below we list the current case lists for the TCGA glioblastoma
-cancer type:
+cancer study:
 
 <<>>=
-getCaseLists(mycgds,'gbm')[,c(1:2)]
+getCaseLists(mycgds,'tcga_gbm')[,c(1:2)]
 @
 
 Here we are only listing the first two columns, case list ID and
@@ -141,7 +141,7 @@ a single gene and a list of genetic profiles. Importantly, the format of the out
 data frame depends on if a single or a list of genes was specified in
 the arguments. Below we are retrieving mRNA expression and copy number
 alteration genetic profiles for the NF1 gene in all samples of the TCGA glioblastoma
-cancer type:
+cancer study:
 
 <<>>=
 getProfileData(mycgds, "NF1", c("gbm_cna_rae","gbm_mrna"), "gbm_all")[c(1:5),]
@@ -213,7 +213,7 @@ function can be used to generate a similar plot:
 
 \begin{center}
 <<NF1plot2,fig=TRUE,echo=TRUE>>=
-plot(mycgds, "gbm", "NF1", c("gbm_cna_rae","gbm_mrna"), "gbm_all", skin = 'disc_cont')
+plot(mycgds, "tcga_gbm", "NF1", c("gbm_cna_rae","gbm_mrna"), "gbm_all", skin = 'disc_cont')
 @
 \end{center}
 
@@ -236,7 +236,7 @@ function can be used to generate a similar plot:
 
 \begin{center}
 <<MDMplot2,fig=TRUE,echo=TRUE>>=
-plot(mycgds, "gbm", c("MDM2","MDM4"), "gbm_mrna" ,"gbm_all")
+plot(mycgds, "tcga_gbm", c("MDM2","MDM4"), "gbm_mrna" ,"gbm_all")
 @
 \end{center}
 

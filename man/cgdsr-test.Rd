@@ -11,20 +11,20 @@
 }
 \value{ Test results in text format.}
 \details{ A set of simple tests are evaluated. The format of the
-  returned output from the following queries are tested: "getCancerTypes()",
+  returned output from the following queries are tested: "getCancerStudies()",
   "getCaselists()", and "getGeneticProfiles()"}
 \author{
 <jacobsen@cbio.mskcc.org>
 }
 \references{
- cBio Cancer Genomics Portal: \url{http://www.cbioportal.org/cgx/}
+ cBio Cancer Genomics Portal: \url{http://www.cbioportal.org/public-portal/}
 }
 \seealso{
 \code{\link{cgdsr}},\code{\link{CGDS}}
 }
 \examples{
 # Create CGDS object
-mycgds = CGDS("http://cbio.mskcc.org/cgds-public/")
+mycgds = CGDS("http://www.cbioportal.org/public-portal/")
 
 # Run tests
 test(mycgds)

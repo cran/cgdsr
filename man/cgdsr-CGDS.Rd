@@ -14,18 +14,18 @@
 <jacobsen@cbio.mskcc.org>
 }
 \references{
- cBio Cancer Genomics Portal: \url{http://www.cbioportal.org/cgx/}
+ cBio Cancer Genomics Portal: \url{http://www.cbioportal.org/}
 }
 \seealso{
-\code{\link{cgdsr}},\code{\link{getCancerTypes}},\code{\link{getGeneticProfiles}},\code{\link{getCaseLists}},\code{\link{getProfileData}}
+\code{\link{cgdsr}},\code{\link{getCancerStudies}},\code{\link{getGeneticProfiles}},\code{\link{getCaseLists}},\code{\link{getProfileData}}
 }
 \examples{
 # Create CGDS object
-mycgds = CGDS("http://cbio.mskcc.org/cgds-public/")
+mycgds = CGDS("http://www.cbioportal.org/public-portal/")
 
 # Test the CGDS endpoint URL using a few simple API tests
 test(mycgds) 
 
-# Get list of cancer types at server
-getCancerTypes(mycgds)
+# Get list of cancer studies at server
+getCancerStudies(mycgds)
 }
