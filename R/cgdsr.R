@@ -80,7 +80,7 @@ setMethodS3("getClinicalData","CGDS", function(x, caseList='', cases=c(), ...) {
   return(df[,-1])
 })
 
-setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, caseList='', cases=c(), skin='cont', skin.normals='', skin.col.gp = c(), ...) {
+setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, caseList='', cases=c(), skin='cont', skin.normals='', skin.col.gp = c(), add.corr = '', legend.pos = 'topright', ...) {
 
   errormsg <- function(msg,error=TRUE) {
     # return empty plot with text
@@ -93,13 +93,12 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
   }
     
   # we only allow the following combinations
-  # a) gene1 (1 profile)
-  # b) gene1 vs gene2 (1 profile)
+  # a) gene1 (1 profile)  # b) gene1 vs gene2 (1 profile)
   # c) profile 1 vs profile 2 (1 gene)
   if((length(genes) > 1 & length(geneticProfiles) > 1) | (length(genes) > 2 | length(geneticProfiles) > 2)) {
     return(errormsg("use only 2 genetic profiles OR 2 genes"))
   }
-
+  
   # make genenames conform to R variable names
   genesR = make.names(genes)
   
@@ -131,6 +130,13 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
     }
   }
 
+  # set sub title with correlation if specified
+  plot.subtitle = ''
+  if ((add.corr == 'pearson'  | add.corr == 'spearman') & ncol(df) == 2) {    
+    ct = cor.test(df[,1],df[,2],method=add.corr)
+    plot.subtitle = paste(add.corr, ' r = ', sprintf("%.2f",ct$estimate), ', p = ',sprintf("%.1e",ct$p.value))
+  }
+  
   ###
   ### Skins
   ###
@@ -141,12 +147,12 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
       hist(df[,1],xlab=paste(genes," , ",gpaxisnames,sep=""),main='')
     } else if (length(genes) == 2) {
       # two genes
-      plot(df[,genesR[1]],df[,genesR[2]] , main = '', xlab = paste(genes[1],", ",gpaxisnames,sep=""), ylab = paste(genes[2],", ",gpaxisnames,sep=""), pch = 1, col = 'black')
+      plot(df[,genesR[1]],df[,genesR[2]] , main = '', xlab = paste(genes[1],", ",gpaxisnames,sep=""), ylab = paste(genes[2],", ",gpaxisnames,sep=""), pch = 1, col = 'black', sub = plot.subtitle)
     } else {
       # two genetic profiles
       gpa = geneticProfiles[1]
       gpb = geneticProfiles[2]
-      plot(df[,gpa],df[,gpb] , main = '', xlab = paste(genes[1],", ",gpaxisnames[gpa],sep=""), ylab = paste(genes[1],", ",gpaxisnames[gpb],sep=""), pch = 1, col = 'black')
+      plot(df[,gpa],df[,gpb] , main = '', xlab = paste(genes[1],", ",gpaxisnames[gpa],sep=""), ylab = paste(genes[1],", ",gpaxisnames[gpb],sep=""), pch = 1, col = 'black', sub = plot.subtitle)
     }
     
   } else if (skin == 'disc') {
@@ -168,7 +174,7 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
       gp.disc = geneticProfiles[1] # b
       gp.cont = geneticProfiles[2] # a
           
-      boxplot(df[,gp.cont] ~ df[,gp.disc], outpch = NA, main = '', xlab = paste(genes[1],", ",gpaxisnames[gp.disc],sep=""), ylab = paste(genes[1],", ",gpaxisnames[gp.cont],sep=""), border = 'gray')
+      boxplot(df[,gp.cont] ~ df[,gp.disc], outpch = NA, main = '', xlab = paste(genes[1],", ",gpaxisnames[gp.disc],sep=""), ylab = paste(genes[1],", ",gpaxisnames[gp.cont],sep=""), border = 'gray', sub = plot.subtitle)
       stripchart(df[,gp.cont] ~ df[,gp.disc],vertical = TRUE, add = TRUE, method = 'jitter', pch = 1, col = 'black')
     }
     
@@ -198,11 +204,11 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
     labels=seq(-3,2)
     names(labels)=c("Normal","Homdel","Hetloss","Diploid","Gain","Amp")
     labels.inuse = sort(unique(df.nona[,geneticProfiles[1]])) # sort removes any NA
-    
+
     boxplot(df.nona[,geneticProfiles[2]] ~ df.nona[,geneticProfiles[1]], main='', outline=FALSE,
             xlab = paste(genes,", ",gpaxisnames[geneticProfiles[1]],sep=""),
             ylab = paste(genes,", ",gpaxisnames[geneticProfiles[2]],sep=""),
-            border="gray",ylim=ylim, axes=FALSE, outpch = NA)
+            border="gray",ylim=ylim, axes=FALSE, outpch = NA, sub = plot.subtitle)
 
     axis(1,at=seq(1,length(labels.inuse)),labels=names(labels)[match(labels.inuse,labels)],cex.axis=0.8)
     axis(2,cex.axis=0.8,las=2)
@@ -223,7 +229,8 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
       y=rep.int(as.numeric(cc[1]),as.numeric(cc[3]))
       y=y+stats::runif(length(y),-0.1,0.1)
     }))
-    xy=as.data.frame(xy) 
+    xy=as.data.frame(xy)
+    colnames(xy) = c('MRNA','JITTER')
     
     # Initialize plotting features
     nonmut.pch = 4
@@ -249,7 +256,7 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
         mt=list()
         mt$pch=c(21,23,24,25,22)
         mt$type=c("missense","nonsense","splice","shift","in_frame")
-        mt$pattern=c("^[a-zA-Z][0-9]+[a-zA-Z]$","[*]$","^e.+[0-9]$","fs$","In_Frame_Del")
+        mt$pattern=c("^[a-z][0-9]+[a-z]$","[*x]$","^(e.+[0-9]|.+_splice)$","fs$","del$")
         mt$bg=c("goldenrod","darkblue","darkgray","black","goldenrod")
         mt=as.data.frame(mt)
         for(i in 1:nrow(mt)) {
@@ -265,7 +272,7 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
                )
       }
     }
-    
+
     ## # Plot the jittered data, add mutated points last
     xy.mut = (pch != nonmut.pch)
     points(xy$JITTER[!xy.mut],xy$MRNA[!xy.mut],pch=pch[!xy.mut],cex=cex[!xy.mut],col=col[!xy.mut],bg=bg[!xy.mut])
@@ -277,8 +284,7 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
     # these skins use parameters
     # * skin.col.gp = (cna,mut) [optional]
     # * skin.normals = normal_case_set [optional]
-
-    # [meth_mrna_cna_mut] forces x axis range to [0,1.05] 
+    # [meth_mrna_cna_mut] forces x axis range to [0,1.05]
         
     # fetch cna and mut data for color coding
     pch=rep(1,nrow(df))
@@ -311,10 +317,15 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
       }
     }
 
-    xlim = range(df[,geneticProfiles[1]])
+    xlim = range(df[,geneticProfiles[1]],na.rm = TRUE)
     # add 15% to range, to make room for legend
-    xlim = c(min(xlim),max(xlim) + (max(xlim)-min(xlim))*0.15)
-
+    if (legend.pos == 'topright') {
+      xlim = c(min(xlim),max(xlim) + (max(xlim)-min(xlim))*0.15)
+    }
+    else if (legend.pos == 'topleft') {
+      xlim = c(min(xlim) - (max(xlim)-min(xlim))*0.15,max(xlim))
+    }
+      
     if (skin == 'meth_mrna_cna_mut') {
       # force x axis range to [0,1.05] 
       xlim = c(0,1.05)
@@ -324,15 +335,14 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
     plot( df[,geneticProfiles[1]],df[,geneticProfiles[2]],main="",
          xlab=paste(genes,", ",gpaxisnames[geneticProfiles[1]],sep=""),
          ylab=paste(genes,", ",gpaxisnames[geneticProfiles[2]],sep=""),
-         xlim=xlim,pch=pch,col=col,cex=1.2
+         xlim=xlim,pch=pch,col=col,cex=1.2, sub = plot.subtitle
          )
 
     #abline(lm(d$rna~d$methylation),col="red3",lty=2,lwd=1.5)
     #lines(loess.smooth(d$methylation,d$rna),col="darkgray",lwd=2)
 
     # Replace with dynamically created legend when time permits
-    legend(
-           "topright",bty="n",
+    legend(legend.pos,bty="n",
            c("Homdel","Hetloss","Diploid","Gain","Amp","Mutated","Normal"),
            col=c('darkblue','deepskyblue','black','hotpink','red','orange','black'),
            pch=c(1,1,1,1,1,20,20),cex=0.85,pt.cex=1.0
@@ -345,7 +355,8 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
   return(TRUE)
   
 })
-            
+
+
 setMethodS3("test","CGDS", function(x, ...) {
   checkEq = function(a,b) { if (identical(a,b)) "OK\n" else "FAILED!\n" }
   checkGrt = function(a,b) { if (a > b) "OK\n" else "FAILED!\n" }

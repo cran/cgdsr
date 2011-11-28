@@ -107,7 +107,7 @@ specific cancer study. Below we list the current genetic profiles for
 the TCGA glioblastoma cancer study:
 
 <<>>=
-getGeneticProfiles(mycgds,'tcga_gbm')[,c(1:2)]
+getGeneticProfiles(mycgds,'gbm_tcga')[,c(1:2)]
 @
 
 Here we are only listing the first two columns, genetic profile ID and
@@ -126,7 +126,7 @@ lists. Below we list the current case lists for the TCGA glioblastoma
 cancer study:
 
 <<>>=
-getCaseLists(mycgds,'tcga_gbm')[,c(1:2)]
+getCaseLists(mycgds,'gbm_tcga')[,c(1:2)]
 @
 
 Here we are only listing the first two columns, case list ID and
@@ -213,7 +213,7 @@ function can be used to generate a similar plot:
 
 \begin{center}
 <<NF1plot2,fig=TRUE,echo=TRUE>>=
-plot(mycgds, "tcga_gbm", "NF1", c("gbm_cna_rae","gbm_mrna"), "gbm_all", skin = 'disc_cont')
+plot(mycgds, "gbm_tcga", "NF1", c("gbm_cna_rae","gbm_mrna"), "gbm_all", skin = 'disc_cont')
 @
 \end{center}
 
@@ -236,7 +236,7 @@ function can be used to generate a similar plot:
 
 \begin{center}
 <<MDMplot2,fig=TRUE,echo=TRUE>>=
-plot(mycgds, "tcga_gbm", c("MDM2","MDM4"), "gbm_mrna" ,"gbm_all")
+plot(mycgds, "gbm_tcga", c("MDM2","MDM4"), "gbm_mrna" ,"gbm_all")
 @
 \end{center}
 

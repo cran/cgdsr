@@ -5,7 +5,7 @@
 \title{Generic plot function for CGDS API data.}
 \description{Queries the CGDS API and plots data for specified genes and genetic profiles.}
 \usage{\method{plot}{CGDS}(x,cancerStudy, genes, geneticProfiles,
-caseList, cases, skin, skin.normals, skin.col.gp, ...)}
+caseList, cases, skin, skin.normals, skin.col.gp, add.corr, legend.pos, ...)}
 \arguments{
   \item{x}{A CGDS object (required)}
   \item{cancerStudy}{cancer study ID (required)}
@@ -17,10 +17,14 @@ caseList, cases, skin, skin.normals, skin.col.gp, ...)}
   \item{skin}{A string specifying which plotting layout skin to use
     (default is continous data 'cont')}
   \item{skin.normals}{Specify a case list ID with normal samples, only
-    some skins handle normal data.)}
+    some skins handle normal data.}
   \item{skin.col.gp}{Specify a vector of additional case list IDs to use
     for color coding of data points. Color coding is only handled by
-    some skins.)}
+    some skins.}
+  \item{add.corr}{Computes correlation between the two data
+    vectors. Specify correlation method ('pearson' or 'spearman') as
+    argument.}
+    \item{legend.pos}{Position of legend in plot (default is 'topright').}
   \item{...}{Not used.}
 }
 \details{Queries the CGDS API and plots data for specified genes and
