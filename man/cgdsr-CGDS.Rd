@@ -4,10 +4,11 @@
 \title{Construct a CGDS connection object}
 \description{Creates a CGDS connection object from a CGDS endpoint URL. This object
   must be passed on to the methods which query the server.}
-\usage{CGDS(url,verbose=FALSE)}
+\usage{CGDS(url,verbose=FALSE,ploterrormsg='')}
 \arguments{
   \item{url}{A CGDS URL (required).}
   \item{verbose}{A boolean variable specifying verbose output (default FALSE)}
+  \item{ploterrormsg}{An optional message to display in plots if an error occurs (default '')}
 }
 \value{ A CGDS connection object. This object must be passed on to the methods which query the server. }
 \author{

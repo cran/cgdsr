@@ -1,14 +1,20 @@
 library(R.oo);
 
-setConstructorS3("CGDS", function(url='',verbose=FALSE) {
+setConstructorS3("CGDS", function(url='',verbose=FALSE,ploterrormsg='') {
   extend(Object(), "CGDS",
          .url=url,
-         .verbose=verbose)
+         .verbose=verbose,
+         .ploterrormsg='')
 })
 
 setMethodS3("processURL","CGDS", private=TRUE, function(x, url, ...) {
   if (x$.verbose) cat(url,"\n")
-  df = read.table(url, skip=0, header=TRUE, as.is=TRUE, sep="\t") 
+  df = read.table(url, skip=0, header=TRUE, as.is=TRUE, sep="\t",quote='') 
+})
+
+setMethodS3("setPlotErrorMsg","CGDS", function(x, msg, ...) {
+  x$.ploterrormsg = msg
+  return(msg)
 })
 
 setMethodS3("setVerbose","CGDS", function(x, verbose, ...) {
@@ -34,18 +40,25 @@ setMethodS3("getGeneticProfiles","CGDS", function(x, cancerStudy, ...) {
   return(df)
 })
 
-setMethodS3("getProfileData","CGDS", function(x, genes, geneticProfiles, caseList='', cases=c(), ...) {
+setMethodS3("getMutationData","CGDS", function(x, caseList, geneticProfile, genes, ...) {
+  url = paste(x$.url, "webservice.do?cmd=getMutationData",
+    "&case_set_id=", caseList,
+    "&genetic_profile_id=", geneticProfile,
+    "&gene_list=", paste(genes,collapse=","), sep="")
+  df = processURL(x,url)
+  return(df)
+})
+
+setMethodS3("getProfileData","CGDS", function(x, genes, geneticProfiles, caseList='', cases=c(), caseIdsKey = '', ...) {
   url = paste(x$.url, "webservice.do?cmd=getProfileData",
     "&gene_list=", paste(genes,collapse=","),
     "&genetic_profile_id=", paste(geneticProfiles,collapse=","),
     "&id_type=", 'gene_symbol',
     sep="")
 
-  if (length(cases)>0) {
-    url = paste(url,"&case_list=", paste(cases,collapse=","),sep='')
-  } else {
-    url = paste(url,"&case_set_id=", caseList,sep='')
-  }
+  if (length(cases)>0) { url = paste(url,"&case_list=", paste(cases,collapse=","),sep='')
+  } else if (caseIdsKey != '') { url = paste(url,"&case_ids_key=", caseIdsKey,sep='')
+  } else { url = paste(url,"&case_set_id=", caseList,sep='') }
   
   df = processURL(x,url)
 
@@ -66,26 +79,27 @@ setMethodS3("getProfileData","CGDS", function(x, genes, geneticProfiles, caseLis
   return(data.frame(m))
 })
 
-setMethodS3("getClinicalData","CGDS", function(x, caseList='', cases=c(), ...) {
+setMethodS3("getClinicalData","CGDS", function(x, caseList='', cases=c(), caseIdsKey = '', ...) {
   url = paste(x$.url, "webservice.do?cmd=getClinicalData",sep="")
 
-  if (length(cases)>0) {
-    url = paste(url,"&case_list=", paste(cases,collapse=","),sep='')
-  } else {
-    url = paste(url,"&case_set_id=", caseList,sep='')
-  }
+  if (length(cases)>0) { url = paste(url,"&case_list=", paste(cases,collapse=","),sep='')
+  } else if (caseIdsKey != '') { url = paste(url,"&case_ids_key=", caseIdsKey,sep='')
+  } else { url = paste(url,"&case_set_id=", caseList,sep='') }
   
   df = processURL(x,url)
   rownames(df) = make.names(df$case_id)
   return(df[,-1])
 })
 
-setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, caseList='', cases=c(), skin='cont', skin.normals='', skin.col.gp = c(), add.corr = '', legend.pos = 'topright', ...) {
+setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, caseList='', cases=c(),  caseIdsKey = '', skin='cont', skin.normals='', skin.col.gp = c(), add.corr = '', legend.pos = 'topright', ...) {
 
   errormsg <- function(msg,error=TRUE) {
     # return empty plot with text
     if (error) {msg = paste('Error:',msg)}
+    # override msg if global message provided in object
+    if (x$.ploterrormsg != '') {msg = x$.ploterrormsg}
     plot.new()
+    # set message text here ...
     #mtext(msg,cex=1.0,col='darkred')
     text(0.5,0.5,msg,cex=1.0,col='darkred')
     box()
@@ -103,7 +117,7 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
   genesR = make.names(genes)
   
   # get data, check more than zero rows returned, otherwise return
-  df = getProfileData(x, genes, geneticProfiles, caseList, cases)
+  df = getProfileData(x, genes, geneticProfiles, caseList, cases, caseIdsKey)
   if (nrow(df) == 0) { return(errormsg(paste('empty data frame returned :\n',colnames(df)[1]))) }
 
   # check data returned with more than two genes or genetic profiles
@@ -242,7 +256,7 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
 
     # fetch mutation data for color coding    
     if (length(skin.col.gp == 1)) {
-      df.mut = getProfileData(x, genes, skin.col.gp, caseList, cases)
+      df.mut = getProfileData(x, genes, skin.col.gp, caseList, cases, caseIdsKey)
       if (nrow(df.mut) == 0) { return(errormsg(paste('empty data frame returned :\n',colnames(df.mut)[1]))) }
       # get matrix corresponding to df.nona
       df.mut = df.mut[rownames(df.nona),1]
@@ -290,8 +304,8 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
     pch=rep(1,nrow(df))
     col=rep("black",nrow(df))
     
-    if (length(skin.col.gp == 2)) {
-      df.col = getProfileData(x, genes, skin.col.gp, caseList, cases)
+    if (length(skin.col.gp) == 2) { # color by both CNA and mutation
+        df.col = getProfileData(x, genes, skin.col.gp, caseList, cases, caseIdsKey)
       if (nrow(df.col) == 0) { return(errormsg(paste('empty data frame returned :\n',colnames(df.col)[1]))) }
       # because mut is text vector, we need to transform cna to integer vector instead of factor
       cna = as.integer(as.vector(df.col[,skin.col.gp[1]]))
@@ -303,7 +317,17 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
       col[mut!="NaN"]="orange"
       pch[mut!="NaN"]=20
     }
-
+    else if (length(skin.col.gp) == 1) { # color only by CNA
+      df.col = getProfileData(x, genes, skin.col.gp, caseList, cases, caseIdsKey)
+      if (nrow(df.col) == 0) { return(errormsg(paste('empty data frame returned :\n',colnames(df.col)[1]))) }
+      # because mut is text vector, we need to transform cna to integer vector instead of factor
+      cna = as.integer(as.vector(df.col[,1]))
+      col[cna==-2]="darkblue"
+      col[cna==-1]="deepskyblue"
+      col[cna==1]="hotpink"
+      col[cna==2]="red3"
+    }
+    
     # fetch optional normal methylation and mRNA data
     if (skin.normals != '') {
       df.norm = getProfileData(x, genes, geneticProfiles, skin.normals)

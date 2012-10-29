@@ -5,7 +5,7 @@
 \title{Retrieves genomic profile data for genes and genetic profiles.}
 \description{Queries the CGDS API and returns data based on gene(s),
   genetic profile(s),  and a case list.}
-\usage{\method{getProfileData}{CGDS}(x,genes,geneticProfiles,caseList,cases,...)}
+\usage{\method{getProfileData}{CGDS}(x,genes,geneticProfiles,caseList,cases,caseIdsKey,...)}
 \arguments{
   \item{x}{A CGDS object (required)}
   \item{genes}{A vector of gene names or a String specifying a single gene (required)}
@@ -13,6 +13,7 @@
     a single genetic profile (required)}
   \item{caseList}{A case list ID}
   \item{cases}{A vector of case IDs)}
+  \item{caseIdsKey}{Only used by web portal.}
   \item{...}{Not used.}
 }
 \value{

@@ -144,7 +144,7 @@ alteration genetic profiles for the NF1 gene in all samples of the TCGA glioblas
 cancer study:
 
 <<>>=
-getProfileData(mycgds, "NF1", c("gbm_tcga_cna_rae","gbm_tcga_mrna"), "gbm_tcga_all")[c(1:5),]
+getProfileData(mycgds, "NF1", c("gbm_tcga_gistic","gbm_tcga_mrna"), "gbm_tcga_all")[c(1:5),]
 @
 
 We are here only showing the first five rows of the data frame. In the next example, we are
@@ -201,7 +201,7 @@ level of NF1 across all samples).
 
 \begin{center}
 <<NF1plot1,fig=TRUE,echo=TRUE>>=
-df = getProfileData(mycgds, "NF1", c("gbm_tcga_cna_rae","gbm_tcga_mrna"), "gbm_tcga_all")
+df = getProfileData(mycgds, "NF1", c("gbm_tcga_gistic","gbm_tcga_mrna"), "gbm_tcga_all")
 head(df)
 boxplot(df[,2] ~ df[,1], main="NF1 : CNA status vs mRNA expression", xlab="CNA status", ylab="mRNA expression", outpch = NA)
 stripchart(df[,2] ~ df[,1], vertical=T, add=T, method="jitter",pch=1,col='red')
@@ -213,7 +213,7 @@ function can be used to generate a similar plot:
 
 \begin{center}
 <<NF1plot2,fig=TRUE,echo=TRUE>>=
-plot(mycgds, "gbm_tcga", "NF1", c("gbm_tcga_cna_rae","gbm_tcga_mrna"), "gbm_tcga_all", skin = 'disc_cont')
+plot(mycgds, "gbm_tcga", "NF1", c("gbm_tcga_gistic","gbm_tcga_mrna"), "gbm_tcga_all", skin = 'disc_cont')
 @
 \end{center}
 

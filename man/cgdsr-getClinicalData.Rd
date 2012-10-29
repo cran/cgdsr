@@ -5,11 +5,12 @@
 \title{Get clinical data for cancer study}
 \description{Queries the CGDS API and returns clinical data for
   a given case list.}
-\usage{\method{getClinicalData}{CGDS}(x, caseList, cases, ...)}
+\usage{\method{getClinicalData}{CGDS}(x, caseList, cases, caseIdsKey, ...)}
 \arguments{
   \item{x}{A CGDS object (required)}
   \item{caseList}{A case list ID}
   \item{cases}{A vector of case IDs}
+  \item{caseIdsKey}{Only used by web portal.}
   \item{...}{Not used.}
 }
 \value{A data.frame with rows for each case, rownames corresponding to
