@@ -17,7 +17,7 @@
 \enumerate{
 \item \var{case_list_id}:  a unique ID used to identify the case list ID in
 subsequent interface calls.  This is a human readable ID.  For example,
-"gbm_all" identifies all cases profiles in the TCGA GBM study.
+"gbm_tcga_all" identifies all cases profiles in the TCGA GBM study.
 \item \var{case_list_name}:  short name for the case list.
 \item \var{case_list_description}:  short description of the case list.
 \item \var{cancer_study_id}:  cancer study ID tied to this genetic profile.  Will

@@ -17,7 +17,7 @@
 \enumerate{
 \item \var{genetic_profile_id}:  a unique ID used to identify the genetic profile ID
 in subsequent interface calls.  This is a human readable ID.  For
-example, "gbm_mutations" identifies the TCGA GBM mutation genetic profile.
+example, "gbm_tcga_mutations" identifies the TCGA GBM mutation genetic profile.
 \item \var{genetic_profile_name}:  short profile name.
 \item \var{genetic_profile_description}:  short profile description.
 \item \var{cancer_study_id}:  cancer study ID tied to this genetic profile.  Will

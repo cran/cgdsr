@@ -384,41 +384,41 @@ setMethodS3("test","CGDS", function(x, ...) {
   # clinical data
   # check colnames
   cat('getClinicalData (1/1) ... ',
-      checkEq(colnames(getClinicalData(x,'gbm_all')),
+      checkEq(colnames(getClinicalData(x,'gbm_tcga_all')),
               c("overall_survival_months","overall_survival_status","disease_free_survival_months",
                 "disease_free_survival_status","age_at_diagnosis")))
   # check value of overall_survival_months
   #cat('getClinicalData (2/3) ... ',
-  #    checkGrt(getClinicalData(x,'gbm_all')['TCGA.02.0080','overall_survival_months'], 89))
+  #    checkGrt(getClinicalData(x,'gbm_tcga_all')['TCGA.02.0080','overall_survival_months'], 89))
   # check cases parameter
   #cat('getClinicalData (3/3) ... ',
   #    checkGrt(getClinicalData(x,cases=c('TCGA-02-0080'))['TCGA.02.0080','overall_survival_months'], 89))
   
   # check one gene, one profile
   cat('getProfileData (1/7) ... ',
-      checkEq(colnames(getProfileData(x,'NF1','gbm_mrna','gbm_all')),
+      checkEq(colnames(getProfileData(x,'NF1','gbm_tcga_mrna','gbm_tcga_all')),
               "NF1"))
   # check many genes, one profile
   cat('getProfileData (2/7) ... ',
-      checkEq(colnames(getProfileData(x,c('MDM2','MDM4'),'gbm_mrna','gbm_all')),
+      checkEq(colnames(getProfileData(x,c('MDM2','MDM4'),'gbm_tcga_mrna','gbm_tcga_all')),
               c("MDM2","MDM4")))
   # check one gene, many profile
   cat('getProfileData (3/7) ... ',
-      checkEq(colnames(getProfileData(x,'NF1',c('gbm_mrna','gbm_mutations'),'gbm_all')),
-              c("gbm_mrna","gbm_mutations")))
+      checkEq(colnames(getProfileData(x,'NF1',c('gbm_tcga_mrna','gbm_tcga_mutations'),'gbm_tcga_all')),
+              c('gbm_tcga_mrna','gbm_tcga_mutations')))
   # check 3 cases returns matrix with 3 columns
   cat('getProfileData (4/7) ... ',
-      checkEq(rownames(getProfileData(x,'BRCA1','gbm_mrna',cases=c('TCGA-02-0001','TCGA-02-0003'))),
+      checkEq(rownames(getProfileData(x,'BRCA1','gbm_tcga_mrna',cases=c('TCGA-02-0001','TCGA-02-0003'))),
               make.names(c('TCGA-02-0001','TCGA-02-0003'))))
   # invalid gene names return empty data.frame
   cat('getProfileData (5/7) ... ',
-      checkEq(nrow(getProfileData(x,c('NF10','NF11'),'gbm_mrna','gbm_all')),as.integer(0)))
+      checkEq(nrow(getProfileData(x,c('NF10','NF11'),'gbm_tcga_mrna','gbm_tcga_all')),as.integer(0)))
   # invalid case_list_id returns error
   cat('getProfileData (6/7) ... ',
-      checkEq(colnames(getProfileData(x,'NF1','gbm_mrna','xxx')),
+      checkEq(colnames(getProfileData(x,'NF1','gbm_tcga_mrna','xxx')),
               'Error..Problem.when.identifying.a.cancer.study.for.the.request.'))
   # invalid genetic_profile_id returns error
   cat('getProfileData (7/7) ... ',
-    checkEq(colnames(getProfileData(x,'NF1','xxx','gbm_all')),
+    checkEq(colnames(getProfileData(x,'NF1','xxx','gbm_tcga_all')),
             'No.genetic.profile.available.for.genetic_profile_id...xxx.'))  
 })

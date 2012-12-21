@@ -144,14 +144,14 @@ alteration genetic profiles for the NF1 gene in all samples of the TCGA glioblas
 cancer study:
 
 <<>>=
-getProfileData(mycgds, "NF1", c("gbm_cna_rae","gbm_mrna"), "gbm_all")[c(1:5),]
+getProfileData(mycgds, "NF1", c("gbm_tcga_cna_rae","gbm_tcga_mrna"), "gbm_tcga_all")[c(1:5),]
 @
 
 We are here only showing the first five rows of the data frame. In the next example, we are
 retrieving mRNA expression data for the MDM2 and MDM4 genes:
 
 <<>>=
-getProfileData(mycgds, c("MDM2","MDM4"), "gbm_mrna", "gbm_all")[c(1:5),]
+getProfileData(mycgds, c("MDM2","MDM4"), "gbm_tcga_mrna", "gbm_tcga_all")[c(1:5),]
 @
 
 We are again only showing the first five rows of the data frame.
@@ -201,7 +201,7 @@ level of NF1 across all samples).
 
 \begin{center}
 <<NF1plot1,fig=TRUE,echo=TRUE>>=
-df = getProfileData(mycgds, "NF1", c("gbm_cna_rae","gbm_mrna"), "gbm_all")
+df = getProfileData(mycgds, "NF1", c("gbm_tcga_cna_rae","gbm_tcga_mrna"), "gbm_tcga_all")
 head(df)
 boxplot(df[,2] ~ df[,1], main="NF1 : CNA status vs mRNA expression", xlab="CNA status", ylab="mRNA expression", outpch = NA)
 stripchart(df[,2] ~ df[,1], vertical=T, add=T, method="jitter",pch=1,col='red')
@@ -213,7 +213,7 @@ function can be used to generate a similar plot:
 
 \begin{center}
 <<NF1plot2,fig=TRUE,echo=TRUE>>=
-plot(mycgds, "gbm_tcga", "NF1", c("gbm_cna_rae","gbm_mrna"), "gbm_all", skin = 'disc_cont')
+plot(mycgds, "gbm_tcga", "NF1", c("gbm_tcga_cna_rae","gbm_tcga_mrna"), "gbm_tcga_all", skin = 'disc_cont')
 @
 \end{center}
 
@@ -225,7 +225,7 @@ level of the individual gene across all samples).
 
 \begin{center}
 <<MDM2plot1,fig=TRUE,echo=TRUE>>=
-df = getProfileData(mycgds, c("MDM2","MDM4"), "gbm_mrna", "gbm_all")
+df = getProfileData(mycgds, c("MDM2","MDM4"), "gbm_tcga_mrna", "gbm_tcga_all")
 head(df)
 plot(df, main="MDM2 and MDM4 mRNA expression", xlab="MDM2 mRNA expression", ylab="MDM4 mRNA expression")
 @
@@ -236,7 +236,7 @@ function can be used to generate a similar plot:
 
 \begin{center}
 <<MDMplot2,fig=TRUE,echo=TRUE>>=
-plot(mycgds, "gbm_tcga", c("MDM2","MDM4"), "gbm_mrna" ,"gbm_all")
+plot(mycgds, "gbm_tcga", c("MDM2","MDM4"), "gbm_tcga_mrna" ,"gbm_tcga_all")
 @
 \end{center}
 
@@ -248,9 +248,9 @@ and metastatic prostate cancer tumors.
 
 \begin{center}
 <<PTENplot,fig=TRUE,echo=TRUE>>=
-df.pri = getProfileData(mycgds, "PTEN", "pca_mrna", "pca_primary")
+df.pri = getProfileData(mycgds, "PTEN", "prad_mskcc_mrna", "prad_mskcc_primary")
 head(df.pri)
-df.met = getProfileData(mycgds, "PTEN", "pca_mrna", "pca_mets")
+df.met = getProfileData(mycgds, "PTEN", "prad_mskcc_mrna", "prad_mskcc_mets")
 head(df.met)
 boxplot(list(t(df.pri),t(df.met)), main="PTEN expression in primary and metastatic tumors", xlab="Tumor type", ylab="PTEN mRNA expression",names=c('primary','metastatic'), outpch = NA)
 stripchart(list(t(df.pri),t(df.met)), vertical=T, add=T, method="jitter",pch=1,col='red')
