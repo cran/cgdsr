@@ -61,7 +61,7 @@ setMethodS3("getProfileData","CGDS", function(x, genes, geneticProfiles, caseLis
   } else { url = paste(url,"&case_set_id=", caseList,sep='') }
   
   df = processURL(x,url)
-
+  
   if (nrow(df) == 0) { return(df) }
   
   m = matrix()
@@ -440,7 +440,7 @@ setMethodS3("test","CGDS", function(x, ...) {
   # invalid case_list_id returns error
   cat('getProfileData (6/7) ... ',
       checkEq(colnames(getProfileData(x,'NF1','gbm_tcga_mrna','xxx')),
-              'Error..Problem.when.identifying.a.cancer.study.for.the.request.'))
+              'Error..Invalid.case_set_id...xxx.'))
   # invalid genetic_profile_id returns error
   cat('getProfileData (7/7) ... ',
     checkEq(colnames(getProfileData(x,'NF1','xxx','gbm_tcga_all')),

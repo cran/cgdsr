@@ -2,6 +2,7 @@
 # IMPORTS
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Packages to be imported
+import("R.methodsS3","R.oo")
 
 # Object that must exported explicitly
 
