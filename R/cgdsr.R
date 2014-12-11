@@ -9,7 +9,7 @@ setConstructorS3("CGDS", function(url='',verbose=FALSE,ploterrormsg='') {
 
 setMethodS3("processURL","CGDS", private=TRUE, function(x, url, ...) {
   if (x$.verbose) cat(url,"\n")
-  df = read.table(url, skip=0, header=TRUE, as.is=TRUE, sep="\t",quote='') 
+  df = read.table(url, skip=0, header=TRUE, as.is=TRUE, sep="\t",quote='',na.strings="NaN") 
 })
 
 setMethodS3("setPlotErrorMsg","CGDS", function(x, msg, ...) {
@@ -46,6 +46,10 @@ setMethodS3("getMutationData","CGDS", function(x, caseList, geneticProfile, gene
     "&genetic_profile_id=", geneticProfile,
     "&gene_list=", paste(genes,collapse=","), sep="")
   df = processURL(x,url)
+  df$reference_allele = as.character(df$reference_allele)
+  df$variant_allele = as.character(df$variant_allele)
+  df[df[,'reference_allele'] == 'TRUE','reference_allele'] = 'T'
+  df[df[,'variant_allele'] == 'TRUE','variant_allele'] = 'T'
   return(df)
 })
 
@@ -409,7 +413,7 @@ setMethodS3("test","CGDS", function(x, ...) {
   # check colnames
   cat('getClinicalData (1/1) ... ',
       checkEq(colnames(getClinicalData(x,'gbm_tcga_all'))[1],
-              c("DFS_MONTHS")))
+              c("AGE")))
   
   # check one gene, one profile
   cat('getProfileData (1/6) ... ',
@@ -426,7 +430,7 @@ setMethodS3("test","CGDS", function(x, ...) {
   # check 3 cases returns matrix with 3 columns
   cat('getProfileData (4/6) ... ',
       checkEq(rownames(getProfileData(x,'BRCA1','gbm_tcga_mrna',cases=c('TCGA-02-0001','TCGA-02-0003'))),
-              make.names(c('TCGA-02-0001','TCGA-02-0003'))))
+              make.names(c('TCGA-02-0001-01','TCGA-02-0003-01'))))
   # invalid gene names return empty data.frame
   cat('getProfileData (5/6) ... ',
       checkEq(nrow(getProfileData(x,c('NF10','NF11'),'gbm_tcga_mrna','gbm_tcga_all')),as.integer(0)))

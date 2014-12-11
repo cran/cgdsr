@@ -1,0 +1,7 @@
+2014-12-11  Anders Jacobsen Skanderup
+
+	* Fixes to unit tests to comply with update of CGDS Web Service.
+	* Corrected web service endpoint URL in vignette. 
+	* Bug fixes:
+		* getMutationData() now explicitly parses 'T' as character in
+		reference/variant_allele column
