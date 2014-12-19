@@ -1,11 +1,11 @@
-c26cbb4bb29e260324e25de514043a5e *ChangeLog
-0fd9552b8729a37f5f94c639380b52fb *DESCRIPTION
+f2909d8243aba2cdc9451b7bf65d8e7b *ChangeLog
+f34c0331325d39069cbfcf155386bd55 *DESCRIPTION
 dc81623fea1edc485b1a60b7bfc651fd *NAMESPACE
-f4d6e9b4eeba5b9069d20db494a97616 *R/cgdsr.R
+8da31f8593910b172489d372a1ddec05 *R/cgdsr.R
 167a8e7fe62459f8ec75fd76b1117db6 *build/vignette.rds
 0966b717ad53c771270f4d7463cff98d *inst/doc/cgdsr.R
 e63a8a765dc18b8f53ecc8aef21cb64a *inst/doc/cgdsr.Rnw
-45f05323c3bfccfce40e21484850fdbe *inst/doc/cgdsr.pdf
+a828fcbecddf035950888b84d71856ac *inst/doc/cgdsr.pdf
 799850f310916f9822b50f1550f2ef6d *man/cgdsr-CGDS.Rd
 10f62c6e9f849805fdd7c4992a0de37a *man/cgdsr-getCancerStudies.Rd
 2dba98800d12550c5597e97997fd8c4f *man/cgdsr-getCaseLists.Rd
