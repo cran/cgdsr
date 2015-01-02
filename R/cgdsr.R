@@ -9,7 +9,7 @@ setConstructorS3("CGDS", function(url='',verbose=FALSE,ploterrormsg='') {
 
 setMethodS3("processURL","CGDS", private=TRUE, function(x, url, ...) {
   if (x$.verbose) cat(url,"\n")
-  df = read.table(url, skip=0, header=TRUE, as.is=TRUE, sep="\t",quote='',na.strings="NaN") 
+  df = read.table(url, skip=0, header=TRUE, as.is=TRUE, sep="\t",quote='',na.strings=c("NaN","NA")) 
 })
 
 setMethodS3("setPlotErrorMsg","CGDS", function(x, msg, ...) {

@@ -1,3 +1,8 @@
+2015-01-02  Anders Jacobsen Skanderup
+
+	* Fix to handle all types of NA values in processURL()
+
+
 2014-12-19  Anders Jacobsen Skanderup
 
 	* Fixes to unit tests to comply with update of CGDS Web Service.
