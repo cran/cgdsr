@@ -9,7 +9,7 @@ setConstructorS3("CGDS", function(url='',verbose=FALSE,ploterrormsg='') {
 
 setMethodS3("processURL","CGDS", private=TRUE, function(x, url, ...) {
   if (x$.verbose) cat(url,"\n")
-  df = read.table(url, skip=0, header=TRUE, as.is=TRUE, sep="\t",quote='',na.strings=c("NaN","NA")) 
+  df = read.table(url, skip=0, header=TRUE, as.is=TRUE, sep="\t",quote='') 
 })
 
 setMethodS3("setPlotErrorMsg","CGDS", function(x, msg, ...) {
@@ -46,10 +46,6 @@ setMethodS3("getMutationData","CGDS", function(x, caseList, geneticProfile, gene
     "&genetic_profile_id=", geneticProfile,
     "&gene_list=", paste(genes,collapse=","), sep="")
   df = processURL(x,url)
-  df$reference_allele = as.character(df$reference_allele)
-  df$variant_allele = as.character(df$variant_allele)
-  df[df[,'reference_allele'] == 'TRUE','reference_allele'] = 'T'
-  df[df[,'variant_allele'] == 'TRUE','variant_allele'] = 'T'
   return(df)
 })
 
@@ -384,15 +380,16 @@ setMethodS3("plot","CGDS", function(x, cancerStudy, genes, geneticProfiles, case
   
 })
 
-
 setMethodS3("test","CGDS", function(x, ...) {
   checkEq = function(a,b) { if (identical(a,b)) "OK\n" else "FAILED!\n" }
   checkGrt = function(a,b) { if (a > b) "OK\n" else "FAILED!\n" }
+  checkTrue = function(a) { if (a) "OK\n" else "FAILED!\n" }
+  
   cancerstudies = getCancerStudies(x)
   cat('getCancerStudies... ',
       checkEq(colnames(cancerstudies),c("cancer_study_id","name","description")))
   ct = cancerstudies[2,1] # should be row 1 instead ...
-
+  
   cat('getCaseLists (1/2) ... ',
       checkEq(colnames(getCaseLists(x,ct)),
               c("case_list_id","case_list_name",
@@ -400,7 +397,7 @@ setMethodS3("test","CGDS", function(x, ...) {
   cat('getCaseLists (2/2) ... ',
       checkEq(colnames(getCaseLists(x,'xxx')),
               'Error..Problem.when.identifying.a.cancer.study.for.the.request.'))
-
+  
   cat('getGeneticProfiles (1/2) ... ',
       checkEq(colnames(getGeneticProfiles(x,ct)),
               c("genetic_profile_id","genetic_profile_name","genetic_profile_description",
@@ -408,34 +405,33 @@ setMethodS3("test","CGDS", function(x, ...) {
   cat('getGeneticProfiles (2/2) ... ',
       checkEq(colnames(getGeneticProfiles(x,'xxx')),
               'Error..Problem.when.identifying.a.cancer.study.for.the.request.'))
-
+  
   # clinical data
   # check colnames
   cat('getClinicalData (1/1) ... ',
-      checkEq(colnames(getClinicalData(x,'gbm_tcga_all'))[1],
-              c("AGE")))
+      checkTrue("DFS_MONTHS" %in% colnames(getClinicalData(x,'gbm_tcga_all'))))
   
   # check one gene, one profile
-  cat('getProfileData (1/5) ... ',
+  cat('getProfileData (1/6) ... ',
       checkEq(colnames(getProfileData(x,'NF1','gbm_tcga_mrna','gbm_tcga_all')),
               "NF1"))
   # check many genes, one profile
-  cat('getProfileData (2/5) ... ',
+  cat('getProfileData (2/6) ... ',
       checkEq(colnames(getProfileData(x,c('MDM2','MDM4'),'gbm_tcga_mrna','gbm_tcga_all')),
               c("MDM2","MDM4")))
   # check one gene, many profile
-  cat('getProfileData (3/5) ... ',
+  cat('getProfileData (3/6) ... ',
       checkEq(colnames(getProfileData(x,'NF1',c('gbm_tcga_mrna','gbm_tcga_mutations'),'gbm_tcga_all')),
               c('gbm_tcga_mrna','gbm_tcga_mutations')))
   # check 3 cases returns matrix with 3 columns
-  #cat('getProfileData (4/6) ... ',
-  #    checkEq(rownames(getProfileData(x,'BRCA1','gbm_tcga_mrna',cases=c('TCGA-02-0001','TCGA-02-0003'))),
-  #            make.names(c('TCGA-02-0001-01','TCGA-02-0003-01'))))
+  cat('getProfileData (4/6) ... ',
+      checkEq(rownames(getProfileData(x,'BRCA1','gbm_tcga_mrna',cases=c('TCGA-02-0001-01','TCGA-02-0003-01'))),
+              make.names(c('TCGA-02-0001-01','TCGA-02-0003-01'))))
   # invalid gene names return empty data.frame
-  cat('getProfileData (4/5) ... ',
+  cat('getProfileData (5/6) ... ',
       checkEq(nrow(getProfileData(x,c('NF10','NF11'),'gbm_tcga_mrna','gbm_tcga_all')),as.integer(0)))
   # invalid case_list_id returns error
-  cat('getProfileData (5/5) ... ',
+  cat('getProfileData (6/6) ... ',
       checkEq(colnames(getProfileData(x,'NF1','gbm_tcga_mrna','xxx')),
               'Error..Invalid.case_set_id...xxx.'))
 })

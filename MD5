@@ -1,11 +1,11 @@
-348e350f36c7f6e78385353a61543001 *ChangeLog
-b43d5898c252acbdf1114e6c1f0f7424 *DESCRIPTION
-dc81623fea1edc485b1a60b7bfc651fd *NAMESPACE
-f4ac4e86c2411a8a096acf9ba3db2048 *R/cgdsr.R
+ab7dd9926852ea60626380bd4d96f3fc *DESCRIPTION
+1598a9b7a884e124b5e65c81eafa0acf *NAMESPACE
+514c1317f18df9cc7a0370fd78a51ba7 *R/cgdsr.R
 167a8e7fe62459f8ec75fd76b1117db6 *build/vignette.rds
 0966b717ad53c771270f4d7463cff98d *inst/doc/cgdsr.R
 e63a8a765dc18b8f53ecc8aef21cb64a *inst/doc/cgdsr.Rnw
-adcab4cf0a7b1f498a4c56d1924425a8 *inst/doc/cgdsr.pdf
+aded7a15d4cf198cf97ea18591f72a1d *inst/doc/cgdsr.pdf
+e16d79836a41e9dd56365b26f724b445 *inst/tests/test_cgdsr.R
 799850f310916f9822b50f1550f2ef6d *man/cgdsr-CGDS.Rd
 10f62c6e9f849805fdd7c4992a0de37a *man/cgdsr-getCancerStudies.Rd
 2dba98800d12550c5597e97997fd8c4f *man/cgdsr-getCaseLists.Rd
@@ -19,4 +19,5 @@ db66a2d98ff2bd019122aac7b7df0f2a *man/cgdsr-plot.Rd
 0ab5a319afd54cdf97ae6ea027848115 *man/cgdsr-setPlotErrorMsg.Rd
 ce771d52b3dc9b4108588c7b958ba176 *man/cgdsr-setVerbose.Rd
 1082c745db65086e614a5be03020be8a *man/cgdsr-test.Rd
+b83d2f9506bfd0790bb6da8948d719dc *tests/runTests.R
 e63a8a765dc18b8f53ecc8aef21cb64a *vignettes/cgdsr.Rnw
