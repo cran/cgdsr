@@ -1,4 +1,4 @@
-ab7dd9926852ea60626380bd4d96f3fc *DESCRIPTION
+18f14696bf730d1c444e64b3516e0ee8 *DESCRIPTION
 1598a9b7a884e124b5e65c81eafa0acf *NAMESPACE
 514c1317f18df9cc7a0370fd78a51ba7 *R/cgdsr.R
 167a8e7fe62459f8ec75fd76b1117db6 *build/vignette.rds
@@ -8,11 +8,11 @@ aded7a15d4cf198cf97ea18591f72a1d *inst/doc/cgdsr.pdf
 e16d79836a41e9dd56365b26f724b445 *inst/tests/test_cgdsr.R
 799850f310916f9822b50f1550f2ef6d *man/cgdsr-CGDS.Rd
 10f62c6e9f849805fdd7c4992a0de37a *man/cgdsr-getCancerStudies.Rd
-2dba98800d12550c5597e97997fd8c4f *man/cgdsr-getCaseLists.Rd
+e45ee72be0e1834bdf19edb458d5121a *man/cgdsr-getCaseLists.Rd
 28b37f473589cfd4b7cedcd92588c047 *man/cgdsr-getClinicalData.Rd
-1fd972c0a95d83b53d3c8537f9bfe8ab *man/cgdsr-getGeneticProfiles.Rd
+833731edbfcbc16e89d2f0d49d0206e5 *man/cgdsr-getGeneticProfiles.Rd
 d3bd80d8aa494ea2e403862d319ec8fa *man/cgdsr-getMutationData.Rd
-9cc88e1a5c0c9e904b2f04e0cd970273 *man/cgdsr-getProfileData.Rd
+289e4e16025b24ed761757bd230e3ed1 *man/cgdsr-getProfileData.Rd
 b446dc813a6d50afd664766f1ef5450c *man/cgdsr-package.Rd
 db66a2d98ff2bd019122aac7b7df0f2a *man/cgdsr-plot.Rd
 2b4568d6f8eb3cf04a2fa4ebe3d351b1 *man/cgdsr-processURL.Rd
