@@ -42,7 +42,7 @@ case IDs.
 }
 \examples{
 # Create CGDS object
-mycgds = CGDS("http://www.cbioportal.org/public-portal/")
+mycgds = CGDS("http://www.cbioportal.org/")
 
 # Get list of cancer studies at server
 getCancerStudies(mycgds)

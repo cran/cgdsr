@@ -39,7 +39,7 @@ MUTATION, MUTATION_EXTENDED, COPY_NUMBER_ALTERATION, MRNA_EXPRESSION.
 }
 \examples{
 # Create CGDS object
-mycgds = CGDS("http://www.cbioportal.org/public-portal/")
+mycgds = CGDS("http://www.cbioportal.org/")
 
 # Get list of cancer studys at server
 getCancerStudies(mycgds)
