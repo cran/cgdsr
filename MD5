@@ -1,10 +1,10 @@
-bddcf657a1b75e95a8b14e9ffeeaf15a *DESCRIPTION
+3b346fde54b14d9b64947617a3034654 *DESCRIPTION
 1598a9b7a884e124b5e65c81eafa0acf *NAMESPACE
 514c1317f18df9cc7a0370fd78a51ba7 *R/cgdsr.R
-167a8e7fe62459f8ec75fd76b1117db6 *build/vignette.rds
+d00eb992fd9323a3dd4a372f444cf089 *build/vignette.rds
 7599f22dc51bb07a0c91f248f339fc2c *inst/doc/cgdsr.R
 3cf6021c41b3875389242e2ee51c15f6 *inst/doc/cgdsr.Rnw
-aded7a15d4cf198cf97ea18591f72a1d *inst/doc/cgdsr.pdf
+14f90bf0082041db1809c578976a8768 *inst/doc/cgdsr.pdf
 e8199d8c648fac71bf259bb3a6cae038 *inst/tests/test_cgdsr.R
 5bcbea3bb3f6a6a647b3b733cfcf6b8d *man/cgdsr-CGDS.Rd
 c04bfbdab10e22ea1a689b88cfc13e38 *man/cgdsr-getCancerStudies.Rd
