@@ -1,19 +1,35 @@
-library(R.oo);
+library(R.oo)
 
 .onAttach <- function(libname, pkgname){
     packageStartupMessage('Please send questions to cbioportal@googlegroups.com')
 }
 
-setConstructorS3("CGDS", function(url='',verbose=FALSE,ploterrormsg='') {
+setConstructorS3("CGDS", function(url='',verbose=FALSE,ploterrormsg='',token=NULL) {
   extend(Object(), "CGDS",
          .url=url,
+         .token=token,
          .verbose=verbose,
          .ploterrormsg='')
 })
 
-setMethodS3("processURL","CGDS", private=TRUE, function(x, url, ...) {
+setMethodS3("processURL","CGDS", private=TRUE, function(x, url, force.comment.char.blank=FALSE, ...) {
   if (x$.verbose) cat(url,"\n")
-  df = read.table(url, skip=0, header=TRUE, as.is=TRUE, sep="\t",quote='')
+
+  headers <- httr::add_headers()
+
+  if(!is.null(x$.token)) {
+    headers <- httr::add_headers(Authorization = paste("Bearer ", x$.token, sep = ""))
+  }
+
+  r <- httr::GET(url, headers)
+
+  httr::stop_for_status(r)
+
+  if(force.comment.char.blank) {
+    df = read.table(skip=0, header=TRUE, as.is=TRUE, sep="\t", quote='', comment.char='', fill=TRUE, text=httr::content(r, "text"))
+  } else {
+    df = read.table(skip=0, header=TRUE, as.is=TRUE, sep="\t", quote='', fill=TRUE, text=httr::content(r, "text"))
+  }
 })
 
 setMethodS3("setPlotErrorMsg","CGDS", function(x, msg, ...) {
